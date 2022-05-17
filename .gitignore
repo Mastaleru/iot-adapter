@@ -1,0 +1,13 @@
+.prettierrc
+.prettierignore
+.idea
+.vscode
+privatesky
+node_modules
+package-lock.json
+env.json.devel
+latest-change-set.txt
+iot-adaptor/data
+seed
+common-services
+mqs
