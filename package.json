@@ -22,7 +22,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "node ./bin/clean.js ./",
     "clean-build": "npm run clean && npm run build privatesky && npm run build-all",
-    "freeze": "node ./node_modules/octopus/scripts/freeze dependencies install-mobile"
+    "freeze": "node ./node_modules/octopus/scripts/freeze dependencies install-mobile",
+    "iot-adapter-server": "node ./node_modules/octopus/scripts/setEnv --file=../../../env.json \"cd iot-adapter && npm run start\""
   },
   "repository": {
     "type": "git",
