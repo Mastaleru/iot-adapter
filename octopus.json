@@ -36,12 +36,12 @@
       ]
     },
     {
-      "name": "iot-adaptor",
+      "name": "iot-adapter",
       "src": "",
       "actions": [
         {
           "type": "execute",
-          "cmd": "cd iot-adaptor && npm install"
+          "cmd": "cd iot-adapter && npm install"
         }
       ]
     }

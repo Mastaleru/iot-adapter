@@ -1,0 +1,55 @@
+{
+    "workDir": ".",
+    "dependencies": [
+        {
+            "name": "privatesky",
+            "src": "http://github.com/privatesky/psk-release.git",
+            "actions": [
+                {
+                    "type": "smartClone",
+                    "target": ".",
+                    "collectLog": false,
+                    "commit": "c7dd4d8fa1e4f56f9e1b6ff9f83e639ddd4dbc3f"
+                },
+                {
+                    "type": "execute",
+                    "cmd": "cd privatesky && npm install"
+                }
+            ]
+        },
+        {
+            "name": "common-services",
+            "src": "https://github.com/PharmaLedger-IMI/eco-iot-services.git",
+            "actions": [
+                {
+                    "type": "smartClone",
+                    "target": ".",
+                    "collectLog": false,
+                    "commit": "fd47b9b40eef1568cb5c99c49ec106e580f42cde"
+                },
+                {
+                    "type": "execute",
+                    "cmd": "cd common-services && npm install"
+                },
+                {
+                    "type": "execute",
+                    "cmd": "cd common-services && npm run build"
+                }
+            ]
+        },
+        {
+            "name": "iot-adapter",
+            "src": "",
+            "actions": [
+                {
+                    "type": "execute",
+                    "cmd": "cd iot-adapter && npm install"
+                }
+            ]
+        }
+    ],
+    "build": [],
+    "install-mobile": [],
+    "build-mobile": [],
+    "docs": []
+}
