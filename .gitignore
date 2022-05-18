@@ -11,3 +11,4 @@ iot-adaptor/data
 seed
 common-services
 mqs
+env.json
