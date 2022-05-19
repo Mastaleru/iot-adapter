@@ -1,15 +1,16 @@
 const commonServices = require("common-services")
 const {EvidenceService, CommunicationService, DeviceServices} = commonServices;
 
-module.exports = async function (err, message) {
+async function messageHandlerStrategy(message) {
+
+    try {
+        message = JSON.parse(message);
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
 
     const communicationService = CommunicationService.getCommunicationServiceInstance();
-
-    if (err) {
-        return console.error(err);
-    }
-    message = JSON.parse(message);
-
     const evidenceService = new EvidenceService();
     const deviceService = new DeviceServices();
 
@@ -52,7 +53,7 @@ module.exports = async function (err, message) {
                     "exposureBackground": {
 
                     },
-                    "topic": [ 
+                    "topic": [
                         {
                         "text": mountedEntity.topic
                         }
@@ -183,9 +184,9 @@ module.exports = async function (err, message) {
                     "manufacturer": mountedDevice.manufacturer,
                     "deviceName": mountedDevice.device,
                     "modelNumber": mountedDevice.modelNumber,
-                    "serialNumber": mountedDevice.deviceId                    
+                    "serialNumber": mountedDevice.deviceId
                   };
-                
+
                 let flow = $$.flow.start(domainConfig.type);
                 flow.init(domainConfig);
                 flow.createResource("Device", deviceData,(error, result)=>{
@@ -197,7 +198,7 @@ module.exports = async function (err, message) {
 
             });
             break;
-            
+
             case "list_device":
                 {
                     const domainConfig = {
@@ -287,7 +288,7 @@ module.exports = async function (err, message) {
                     });
                 });
             break;
-            
+
 
             /**  End Message Service for Device */
 
@@ -300,3 +301,5 @@ module.exports = async function (err, message) {
 
 
 }
+
+module.exports = messageHandlerStrategy;

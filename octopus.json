@@ -46,7 +46,26 @@
       ]
     }
   ],
-  "build": [],
+  "build": [
+    {
+      "name": "building common-services",
+      "actions": [
+        {
+          "type": "execute",
+          "cmd": "cd common-services && npm run build"
+        }
+      ]
+    },
+    {
+      "name": "building iot-adapter",
+      "actions": [
+        {
+          "type": "execute",
+          "cmd": "cd iot-adapter && npm run build"
+        }
+      ]
+    }
+  ],
   "install-mobile": [],
   "build-mobile": [],
   "docs": []
