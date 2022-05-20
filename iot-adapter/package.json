@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index",
-    "postinstall": "node ./node_modules/octopus/scripts/run dependencies devmode"
+    "postinstall": "node ./node_modules/octopus/scripts/run dependencies devmode",
+    "build": "npm run postinstall"
   },
   "author": "",
   "license": "ISC",

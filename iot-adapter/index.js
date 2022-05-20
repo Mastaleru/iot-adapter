@@ -88,6 +88,9 @@ async function IotAdaptor(server) {
     } = require('./utils/middlewares');
 
     server.use(function (req, res, next) {
+        req.connection.setTimeout(15 * 60 * 1000); // 15 min
+        res.connection.setTimeout(15 * 60 * 1000);
+
         res.setHeader('Access-Control-Allow-Origin', req.headers.origin || req.headers.host);
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
         res.setHeader('Access-Control-Allow-Headers', `Content-Type, Content-Length, X-Content-Length, Access-Control-Allow-Origin`);
@@ -194,7 +197,6 @@ function getAdaptorIdentity(request, response, next) {
         sc.on("initialised", resolveDid);
     }
 }
-
 
 IotAdaptor(server);
 
