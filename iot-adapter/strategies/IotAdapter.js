@@ -4,6 +4,7 @@ const FhirStorage = require("../storages/fhir.js")
 const DbStorage = require("../storages/db.js")
 const DsuStorage = require("../storages/dsu.js")
 
+
 $$.flow.describe('IotAdaptor', {
 
     init: function (domainConfig) {
@@ -144,7 +145,7 @@ $$.flow.describe('IotAdaptor', {
         } else {
           healthDataDsu = await this.mainDb.findResourceAsync('HealthDataDsu', { where: { "codeReference.reference": `DeviceRequest/${deviceRequest.id}` } });
         }
-
+        
         callback(undefined, {
           deviceRequest: deviceRequest,
           healthDataDsu: healthDataDsu

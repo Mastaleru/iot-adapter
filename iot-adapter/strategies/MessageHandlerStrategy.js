@@ -245,7 +245,7 @@ module.exports = async function (err, message) {
             break;
 
             case "get_a_device":
-                evidenceService.mount(message.ssi, (err, mountedEntity) => {
+                deviceService.mount(message.ssi, (err, mountedEntity) => {
                     if (err){
                         console.log(err);
                     }
@@ -267,7 +267,7 @@ module.exports = async function (err, message) {
             break;
 
             case "delete_device":
-                evidenceService.mount(message.ssi, (err, mountedEntity) => {
+                deviceService.mount(message.ssi, (err, mountedEntity) => {
                     if (err){
                         console.log(err);
                     }
@@ -290,6 +290,37 @@ module.exports = async function (err, message) {
             
 
             /**  End Message Service for Device */
+
+
+            /**  Start Message Service for Device Assignment to Patient */
+
+
+            case "assign_device_to_patient":
+                deviceService.mount(message.ssi, (err, mountedEntity) => { //Assignation Serice
+                    if (err){
+                        console.log(err);
+                    }
+                    const domainConfig = {
+                        "type": "IotAdaptor",
+                        "option": {
+                            "endpoint": "http://localhost:3000/iotAdapter"
+                        }
+                    }
+                    let flow = $$.flow.start(domainConfig.type);
+                    flow.init(domainConfig);
+                    flow.assignDevice(mountedEntity, (error, result)=>{
+                        if (error) {
+                            console.log(error);
+                        }
+                        else 
+                        {
+                            console.log(result.healthDataDsu);
+                            console.log(result.deviceRequest);
+                            await communicationService.sendMessage(mountedEntity.patientDID, result);
+                        }
+                    });
+                });
+            break;
 
         default:
             console.log("*******************************");
