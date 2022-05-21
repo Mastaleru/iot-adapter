@@ -1,5 +1,5 @@
 const commonServices = require("common-services")
-const {EvidenceService, CommunicationService, DeviceServices} = commonServices;
+const {EvidenceService, CommunicationService, DeviceServices, DeviceAssignationService } = commonServices;
 
 async function messageHandlerStrategy(message) {
 
@@ -297,7 +297,7 @@ async function messageHandlerStrategy(message) {
 
 
             case "assign_device_to_patient":
-                deviceService.mount(message.ssi, (err, mountedEntity) => { //Assignation Serice
+                deviceAssignationService.mount(message.ssi, (err, mountedEntity) => { //Assignation Serice
                     if (err){
                         console.log(err);
                     }
