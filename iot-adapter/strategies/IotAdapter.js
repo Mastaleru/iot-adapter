@@ -107,11 +107,17 @@ $$.flow.describe('IotAdaptor', {
         dsu.deleteResource(resourceType, id, callback);
     },
     assignDevice: async function (jsonData, callback) {
-      const patientId = jsonData.patientId;
+      console.log("************* Assign Device ***********")
+      console.log(jsonData)
+      const patientId = jsonData.patientDID;
       const deviceId = jsonData.deviceId;
       try {
-        const patients = await this.mainDb.searchResourcesAsync('Patient', { where: { "identifier.value": patientId } });
+        const patients = await this.mainDb.searchResourcesAsync('Patient', { where: { "did": patientId } });
+        console.log("************* Patients ***********")
+        console.log(patients)
         const devices = await this.mainDb.searchResourcesAsync('Device', { where: { "identifier.value": deviceId } });
+        console.log("************* Devices ***********")
+        console.log(devices)
         const patient = patients[0];
         const device = devices[0];
 
@@ -122,13 +128,17 @@ $$.flow.describe('IotAdaptor', {
             reference: `Device/${device.id}`
           },
           subject: {
-            reference: `Patient/${patient.id}`
+            reference: `Patient/${patient.did}`
           }
         }
 
         let deviceRequest, healthDataDsu;
         const dsuDbName = 'sharedDB';
+        // original script for multi-patient
         deviceRequest = await this.mainDb.findResourceAsync('DeviceRequest', { where: { "status": "active", "codeReference.reference": `Device/${device.id}`, "subject.reference": `Patient/${patient.id}` } });
+        
+        // Demo Script for testing
+        // deviceRequest = await this.mainDb.findResourceAsync('DeviceRequest', { where: { "status": "active", "codeReference.reference": `Device/${device.id}`, "subject.reference": `Patient/${patient.id}` } });
 
         if(!deviceRequest) {
           deviceRequest = await this.mainDb.createResourceAsync('DeviceRequest', newDeviceRequest);

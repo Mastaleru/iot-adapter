@@ -1,5 +1,5 @@
 const commonServices = require("common-services")
-const {EvidenceService, CommunicationService, DeviceServices} = commonServices;
+const {EvidenceService, CommunicationService, DeviceServices, DeviceAssignationService} = commonServices;
 
 async function messageHandlerStrategy(message) {
 
@@ -13,6 +13,7 @@ async function messageHandlerStrategy(message) {
     const communicationService = CommunicationService.getCommunicationServiceInstance();
     const evidenceService = new EvidenceService();
     const deviceService = new DeviceServices();
+    const deviceAssignationService = new DeviceAssignationService();
 
     switch (message.operation) {
         /**  Start Message Service for Evidence */
@@ -177,6 +178,7 @@ async function messageHandlerStrategy(message) {
                         "endpoint": "http://127.0.0.1:3000/adaptor"
                     }
                 };
+                
                 var deviceData = {
                     "resourceType": mountedDevice.resourceType,
                     "identifier": mountedDevice.identifier,
@@ -184,7 +186,8 @@ async function messageHandlerStrategy(message) {
                     "manufacturer": mountedDevice.manufacturer,
                     "deviceName": mountedDevice.device,
                     "modelNumber": mountedDevice.modelNumber,
-                    "serialNumber": mountedDevice.deviceId
+                    "serialNumber": mountedDevice.deviceId,
+                    "trialUid": mountedDevice.trialUid
                   };
 
                 let flow = $$.flow.start(domainConfig.type);
@@ -296,11 +299,13 @@ async function messageHandlerStrategy(message) {
             /**  Start Message Service for Device Assignment to Patient */
 
 
-            case "assign_device_to_patient":
-                deviceService.mount(message.ssi, (err, mountedEntity) => { //Assignation Serice
+            case "device_assignation":
+                deviceAssignationService.mount(message.ssi, (err, assignDevice) => { //Assignation Serice
                     if (err){
                         console.log(err);
                     }
+                    console.log("*******************")
+                    console.log(assignDevice)
                     const domainConfig = {
                         "type": "IotAdaptor",
                         "option": {
@@ -309,15 +314,25 @@ async function messageHandlerStrategy(message) {
                     }
                     let flow = $$.flow.start(domainConfig.type);
                     flow.init(domainConfig);
-                    flow.assignDevice(mountedEntity, (error, result)=>{
+                    flow.assignDevice(assignDevice, async (error, result)=>{
                         if (error) {
                             console.log(error);
                         }
                         else 
                         {
+                            // console.log(result.healthDataDsu);
+                            console.log("********* Health Data DSU  **********")
                             console.log(result.healthDataDsu);
+                            console.log("********* Device Request  **********")
                             console.log(result.deviceRequest);
-                            await communicationService.sendMessage(mountedEntity.patientDID, result);
+                            let healthData = result.healthDataDsu
+                            await communicationService.sendMessage(assignDevice.patientDID, { 
+                                operation: healthData.resourceType,
+                                sReadSSI: healthData.sReadSSI,
+                                seedSSI: healthData.seedSSI,
+                                dbName: healthData.dbName
+       
+                            });
                         }
                     });
                 });
