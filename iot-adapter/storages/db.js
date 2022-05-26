@@ -70,7 +70,7 @@ class DbStorage {
       .then((response) => {
         console.log(response);
         let _resource = _self.normalizeSingleResponse(response);
-        _self.getResourceById(type, _resource.id, callback);
+        _self.getResourceById(type, _resource.id, callback);         
       })
       .catch((error) => {
         console.log(error);
@@ -102,6 +102,7 @@ class DbStorage {
       .put(`/classes/${type}/${id}`, resource)
       .then((response) => {
         _self.getResourceById(type, id, callback);
+        // callback(undefined, _self.normalizeErrorResponse(response))
       })
       .catch((error) => {
         callback(_self.normalizeErrorResponse(error), null);
@@ -211,6 +212,29 @@ class DbStorage {
 
     this.client
       .get(`/classes/${type}?where={"sk":{"$text":{"$search":{"$term":${id}}}}}`)
+      .then((response) => {
+        callback(undefined, _self.normalizeSingleResponse(response));
+      })
+      .catch((error) => {
+        callback(_self.normalizeErrorResponse(error), null);
+      });
+  }
+  getObservationsByPatientDID(type, did, callback) {
+    const _self = this;
+    let ref = "Patient/"+did;
+    this.client
+      .get(`/classes/${type}?where={"sk":{"$text":{"$search":{"$term":${ref}}}}}`)
+      .then((response) => {
+        callback(undefined, _self.normalizeSingleResponse(response));
+      })
+      .catch((error) => {
+        callback(_self.normalizeErrorResponse(error), null);
+      });
+  }
+  getAllObservations(type, did, callback) {
+    const _self = this;
+    this.client
+      .get(`/classes/Observation?where={"sk":{"$text":{"$search":{"$term":"patient/6VHBJrEp4s"}}}}`)
       .then((response) => {
         callback(undefined, _self.normalizeSingleResponse(response));
       })

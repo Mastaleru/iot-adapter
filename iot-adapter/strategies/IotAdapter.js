@@ -58,6 +58,9 @@ $$.flow.describe('IotAdaptor', {
       //this.fhir.getResourceById(resourceType, id, callback);
         this.mainDb.getObservationByPatientId(resourceType, id, callback);
     },
+    getAllObservations: function (resourceType, id, callback) {
+        this.mainDb.getAllObservations(resourceType, "Patient/6VHBJrEp4s", callback);
+    },
     deleteResource: function(resourceType, id, callback) {
         //this.fhir.deleteResource(resourceType, id, callback);
         this.mainDb.deleteResource(resourceType, id, callback);
@@ -113,11 +116,11 @@ $$.flow.describe('IotAdaptor', {
       const deviceId = jsonData.deviceId;
       try {
         const patients = await this.mainDb.searchResourcesAsync('Patient', { where: { "did": patientId } });
-        console.log("************* Patients ***********")
-        console.log(patients)
+        // console.log("************* Patients ***********")
+        // console.log(patients)
         const devices = await this.mainDb.searchResourcesAsync('Device', { where: { "identifier.value": deviceId } });
-        console.log("************* Devices ***********")
-        console.log(devices)
+        // console.log("************* Devices ***********")
+        // console.log(devices)
         const patient = patients[0];
         const device = devices[0];
 
@@ -129,14 +132,28 @@ $$.flow.describe('IotAdaptor', {
           },
           subject: {
             reference: `Patient/${patient.did}`
-          }
+          },
+          trialUid : device.trialUid
         }
+        device.isAssigned  = true;
 
-        let deviceRequest, healthDataDsu;
+        let deviceRequest, healthDataDsu, observations;
         const dsuDbName = 'sharedDB';
+        try {
+          await this.mainDb.updateResource("Device", device.id, device);
+          // await this.mainDb.getObservationsByPatientDID('Observation', patientId,(error, response)=>{
+          //   console.log("************************ Observations *******************");
+          //   console.log(response);
+          //   console.log(error);
+          // });
+          
+        } catch (error) {
+         console.log(error); 
+        }
         // original script for multi-patient
         deviceRequest = await this.mainDb.findResourceAsync('DeviceRequest', { where: { "status": "active", "codeReference.reference": `Device/${device.id}`, "subject.reference": `Patient/${patient.id}` } });
         
+       
         // Demo Script for testing
         // deviceRequest = await this.mainDb.findResourceAsync('DeviceRequest', { where: { "status": "active", "codeReference.reference": `Device/${device.id}`, "subject.reference": `Patient/${patient.id}` } });
 

@@ -1,5 +1,5 @@
 const commonServices = require("common-services")
-const {EvidenceService, CommunicationService, DeviceServices, DeviceAssignationService} = commonServices;
+const {EvidenceService, CommunicationService, DeviceServices, DeviceAssignationService, HealthDataService} = commonServices;
 
 async function messageHandlerStrategy(message) {
 
@@ -14,6 +14,7 @@ async function messageHandlerStrategy(message) {
     const evidenceService = new EvidenceService();
     const deviceService = new DeviceServices();
     const deviceAssignationService = new DeviceAssignationService();
+    const healthDataService = new HealthDataService();
 
     switch (message.operation) {
         /**  Start Message Service for Evidence */
@@ -187,7 +188,8 @@ async function messageHandlerStrategy(message) {
                     "deviceName": mountedDevice.device,
                     "modelNumber": mountedDevice.modelNumber,
                     "serialNumber": mountedDevice.deviceId,
-                    "trialUid": mountedDevice.trialUid
+                    "trialUid": mountedDevice.trialUid,
+                    "isAssigned": mountedDevice.isAssigned
                   };
 
                 let flow = $$.flow.start(domainConfig.type);
@@ -315,24 +317,27 @@ async function messageHandlerStrategy(message) {
                     let flow = $$.flow.start(domainConfig.type);
                     flow.init(domainConfig);
                     flow.assignDevice(assignDevice, async (error, result)=>{
+
                         if (error) {
                             console.log(error);
                         }
                         else 
                         {
-                            // console.log(result.healthDataDsu);
-                            console.log("********* Health Data DSU  **********")
-                            console.log(result.healthDataDsu);
-                            console.log("********* Device Request  **********")
-                            console.log(result.deviceRequest);
-                            let healthData = result.healthDataDsu
-                            await communicationService.sendMessage(assignDevice.patientDID, { 
-                                operation: healthData.resourceType,
-                                sReadSSI: healthData.sReadSSI,
-                                seedSSI: healthData.seedSSI,
-                                dbName: healthData.dbName
-       
+                            
+                            flow.getAllObservations("Observation", assignDevice.patientDID, (err, observations)=>{
+                                console.log(observations.results);
+                                healthDataService.saveObservation(observations.results, (err, data)=> {
+                                    if(err){
+                                        console.log(err);
+                                    }
+                                    communicationService.sendMessage(assignDevice.patientDID, { 
+                                        operation: "HealthData",
+                                        sReadSSI: data.sReadSSI
+                                    });
+                                });
                             });
+                            // let healthData = result.healthDataDsu
+                            
                         }
                     });
                 });
