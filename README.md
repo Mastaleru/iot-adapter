@@ -13,7 +13,13 @@ $ git clone https://github.com/PharmaLedger-IMI/iot-adapter.git
 After the repository was cloned, you must install all the dependencies.
 
 ```sh
-$ npm run dev-install 
+#for development
+$ npm run dev-install  
+```
+or
+```sh
+#for production
+$ npm run install  
 ```
 
 ### Step 2: Customize the env.json
