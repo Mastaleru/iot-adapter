@@ -336,7 +336,6 @@ async function messageHandlerStrategy(message) {
                                     });
                                 });
                             });
-                            // let healthData = result.healthDataDsu
                             
                         }
                     });

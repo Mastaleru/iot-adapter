@@ -30,15 +30,10 @@ $$.flow.describe('IotAdaptor', {
         etlService.processXml(this.mainDb, xmlString, callback);
     },
     searchResources: async function (resourceType, params, callback) {
-        //this.fhir.searchResources(resourceType, params, callback);
-        // console.log("Resource Type: "+resourceType+"Params: "+params);
         let resource = await this.mainDb.searchResourcesAsync(resourceType, params);
         if(resource){
           callback(undefined, resource);
         }
-        // else {
-        //   callback(error, undefined)
-        // }
     },
     createResource: function (resourceType, jsonData, callback) {
         this.mainDb.createResource(resourceType,  jsonData, callback);
@@ -110,8 +105,8 @@ $$.flow.describe('IotAdaptor', {
         dsu.deleteResource(resourceType, id, callback);
     },
     assignDevice: async function (jsonData, callback) {
-      console.log("************* Assign Device ***********")
-      console.log(jsonData)
+      // console.log("************* Assign Device ***********")
+      // console.log(jsonData)
       const patientId = jsonData.patientDID;
       const deviceId = jsonData.deviceId;
       try {
@@ -140,7 +135,13 @@ $$.flow.describe('IotAdaptor', {
         let deviceRequest, healthDataDsu, observations;
         const dsuDbName = 'sharedDB';
         try {
-          await this.mainDb.updateResource("Device", device.id, device);
+          this.mainDb.updateResource("Device", device.id, device, (error, result)=>{
+            console.log("********** Update Resource *********")
+            if(error){
+              console.log(error)
+            }
+            console.log(result);
+          });
           // await this.mainDb.getObservationsByPatientDID('Observation', patientId,(error, response)=>{
           //   console.log("************************ Observations *******************");
           //   console.log(response);
