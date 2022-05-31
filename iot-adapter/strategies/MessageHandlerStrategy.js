@@ -17,86 +17,12 @@ async function messageHandlerStrategy(message) {
     const deviceAssignationService = new DeviceAssignationService();
     const healthDataService = new HealthDataService();
 
-    if(typeof operations[message.operation] === "function"){
+    if (typeof operations[message.operation] === "function") {
         //call this after moving all the operations in separate files
-        console.log("Inside something operations")
         operations[message.operation](message);
-    }
-
-    switch (message.operation) {
+    } else
+        switch (message.operation) {
         /**  Start Message Service for Evidence */
-        case "new_evidence":
-            evidenceService.mount(message.ssi, (err, mountedEntity) => {
-                if (err){
-                    console.log(err);
-                }
-                console.log("**************** Data from Researcher SSAPP  ******************");
-                console.log(mountedEntity);
-                const domainConfig = {
-                    "type": "IotAdaptor",
-                    "option": {
-                        "endpoint": "http://localhost:3000/iotAdapter"
-                    }
-                }
-                let flow = $$.flow.start(domainConfig.type);
-                flow.init(domainConfig);
-                const dbName = "clinicalDecisionSupport";
-                var evidenceData = {
-                    "resourceType": "Evidence",
-                    "meta": {
-                        "sk": mountedEntity.uid
-                    },
-                    "identifier": [ {
-                        "type": {
-                            "text": "KeySSI"
-                          },
-                        "use": "secondary",
-                        "system": "https://pharmaledger.eu",
-                        "value": mountedEntity.uid
-                    } ],
-                    "title": mountedEntity.title,
-                    "subtitle": mountedEntity.subtitle,
-                    "description": mountedEntity.description,
-                    "version": mountedEntity.version,
-                    "status": mountedEntity.status,
-                    "exposureBackground": {
-
-                    },
-                    "topic": [
-                        {
-                        "text": mountedEntity.topic
-                        }
-                    ]
-                  };
-
-                flow.createResource("Evidence", evidenceData,(error, result)=>{
-                    if (error) {
-                        console.log(error);
-                    }
-                    else console.log(result);
-                });
-            });
-            break;
-
-            case "list_evidences":
-                {
-                    const domainConfig = {
-                        "type": "IotAdaptor",
-                        "option": {
-                            "endpoint": "http://localhost:3000/iotAdapter"
-                        }
-                    }
-                    let flow = $$.flow.start(domainConfig.type);
-                    flow.init(domainConfig);
-                    flow.searchResources("Evidence", (error, result)=>{
-                        if (error) {
-                            console.log(error);
-                        }
-                        else console.log(result);
-                    });
-                }
-            break;
-
             case "get_a_evidence":
                 evidenceService.mount(message.ssi, (err, mountedEntity) => {
                     if (err){
@@ -186,7 +112,7 @@ async function messageHandlerStrategy(message) {
                         "endpoint": "http://127.0.0.1:3000/adaptor"
                     }
                 };
-                
+
                 var deviceData = {
                     "resourceType": mountedDevice.resourceType,
                     "identifier": mountedDevice.identifier,
@@ -328,22 +254,22 @@ async function messageHandlerStrategy(message) {
                         if (error) {
                             console.log(error);
                         }
-                        else 
+                        else
                         {
-                            
+
                             flow.getAllObservations("Observation", assignDevice.patientDID, (err, observations)=>{
                                 console.log(observations.results);
                                 healthDataService.saveObservation(observations.results, (err, data)=> {
                                     if(err){
                                         console.log(err);
                                     }
-                                    communicationService.sendMessage(assignDevice.patientDID, { 
+                                    communicationService.sendMessage(assignDevice.patientDID, {
                                         operation: "HealthData",
                                         sReadSSI: data.sReadSSI
                                     });
                                 });
                             });
-                            
+
                         }
                     });
                 });
