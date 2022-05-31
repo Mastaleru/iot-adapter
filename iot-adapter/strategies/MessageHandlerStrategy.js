@@ -19,7 +19,8 @@ async function messageHandlerStrategy(message) {
 
     if(typeof operations[message.operation] === "function"){
         //call this after moving all the operations in separate files
-        //operations[message.operation](message);
+        console.log("Inside something operations")
+        operations[message.operation](message);
     }
 
     switch (message.operation) {

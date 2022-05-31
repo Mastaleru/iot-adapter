@@ -68,8 +68,24 @@ function list_evidences(message){
         });
     }
 }
+function get_a_evidence(message){
+    evidenceService.mount(message.ssi, (err, mountedEntity) => {
+        if (err){
+            console.log(err);
+        }
+        let flow = $$.flow.start(domainConfig.type);
+        flow.init(domainConfig);
+        flow.getResourceById("Evidence", mountedEntity.objectId, (error, result)=>{
+            if (error) {
+                console.log(error);
+            }
+            else console.log(result);
+        });
+    });
+}
 
 module.exports = {
     "new-evidence": new_evidence,
-    "list_evidences":list_evidences
+    "list_evidences":list_evidences,
+    "get_a_evidence":get_a_evidence
 }
