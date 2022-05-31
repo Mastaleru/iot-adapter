@@ -1,5 +1,6 @@
 const commonServices = require("common-services")
 const {EvidenceService, CommunicationService, DeviceServices, DeviceAssignationService, HealthDataService} = commonServices;
+const operations = require("./operations/index.js")
 
 async function messageHandlerStrategy(message) {
 
@@ -15,6 +16,11 @@ async function messageHandlerStrategy(message) {
     const deviceService = new DeviceServices();
     const deviceAssignationService = new DeviceAssignationService();
     const healthDataService = new HealthDataService();
+
+    if(typeof operations[message.operation] === "function"){
+        //call this after moving all the operations in separate files
+        //operations[message.operation](message);
+    }
 
     switch (message.operation) {
         /**  Start Message Service for Evidence */
