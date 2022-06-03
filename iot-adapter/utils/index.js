@@ -1,10 +1,8 @@
-const config = require("./../../env.json");
-
 const getDomainConfig = () => {
     return {
         "type": "IotAdaptor",
         "option": {
-            "endpoint": `http://localhost:${config.IOT_ADAPTOR_PORT}`
+            "endpoint": `http://localhost:${process.env.IOT_ADAPTOR_PORT}`
         }
     }
 }
