@@ -1,13 +1,7 @@
 const commonServices = require("common-services")
 const { DeviceServices} = commonServices;
 const deviceService = new DeviceServices();
-
-const domainConfig = {
-    "type": "IotAdaptor",
-    "option": {
-        "endpoint": "http://localhost:3000/iotAdapter"
-    }
-}
+const { domainConfig } = require("../../utils/index");
 
 function add_device(message){
 
@@ -28,12 +22,6 @@ function add_device(message){
             "trialUid": mountedDevice.trialUid,
             "isAssigned": mountedDevice.isAssigned
           };
-        const domainConfig = {
-            "type": "IotAdaptor",
-            "option": {
-                "endpoint": "http://localhost:3000/iotAdapter"
-            }
-        }
         let flow = $$.flow.start(domainConfig.type);
         flow.init(domainConfig);
         flow.createResource("Device", deviceData,(error, result)=>{

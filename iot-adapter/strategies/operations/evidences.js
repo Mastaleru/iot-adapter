@@ -1,13 +1,7 @@
 const commonServices = require("common-services")
 const { EvidenceService } = commonServices;
 const evidenceService = new EvidenceService();
-
-const domainConfig = {
-    "type": "IotAdaptor",
-    "option": {
-        "endpoint": "http://localhost:3000/iotAdapter"
-    }
-}
+const { domainConfig } = require("../../utils/index");
 
 function new_evidence(message) {
     evidenceService.mount(message.ssi, (err, mountedEntity) => {

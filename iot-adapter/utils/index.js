@@ -4,9 +4,11 @@ const getDomainConfig = () => {
     return {
         "type": "IotAdaptor",
         "option": {
-            "endpoint": `${config.IOT_ADAPTOR_PORT}`
+            "endpoint": `http://localhost:${config.IOT_ADAPTOR_PORT}`
         }
     }
 }
 
-module.exports = {getDomainConfig}
+const domainConfig = getDomainConfig();
+
+module.exports = {domainConfig}

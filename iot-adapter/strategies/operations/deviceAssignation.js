@@ -2,13 +2,8 @@ const commonServices = require("common-services")
 const { DeviceAssignationService, CommunicationService, HealthDataService} = commonServices;
 const healthDataService= new HealthDataService();
 const deviceAssignationService= new DeviceAssignationService();
+const { domainConfig } = require("../../utils/index");
 
-const domainConfig = {
-    "type": "IotAdaptor",
-    "option": {
-        "endpoint": "http://localhost:3000/iotAdapter"
-    }
-}
 function device_assignation(message){
     deviceAssignationService.mount(message.ssi, (err, assignDevice) => { 
         if (err){
