@@ -1,5 +1,5 @@
 const commonServices = require("common-services")
-const {EvidenceService} = commonServices;
+const { EvidenceService } = commonServices;
 const evidenceService = new EvidenceService();
 
 const domainConfig = {
@@ -9,9 +9,9 @@ const domainConfig = {
     }
 }
 
-function new_evidence(message){
+function new_evidence(message) {
     evidenceService.mount(message.ssi, (err, mountedEntity) => {
-        if (err){
+        if (err) {
             console.log(err);
         }
         console.log("**************** Data from Researcher SSAPP  ******************");
@@ -24,14 +24,14 @@ function new_evidence(message){
             "meta": {
                 "sk": mountedEntity.uid
             },
-            "identifier": [ {
+            "identifier": [{
                 "type": {
                     "text": "KeySSI"
                 },
                 "use": "secondary",
                 "system": "https://pharmaledger.eu",
                 "value": mountedEntity.uid
-            } ],
+            }],
             "title": mountedEntity.title,
             "subtitle": mountedEntity.subtitle,
             "description": mountedEntity.description,
@@ -47,7 +47,7 @@ function new_evidence(message){
             ]
         };
 
-        flow.createResource("Evidence", evidenceData,(error, result)=>{
+        flow.createResource("Evidence", evidenceData, (error, result) => {
             if (error) {
                 console.log(error);
             }
@@ -56,11 +56,11 @@ function new_evidence(message){
     });
 }
 
-function list_evidences(message){
+function list_evidences(message) {
     {
         let flow = $$.flow.start(domainConfig.type);
         flow.init(domainConfig);
-        flow.searchResources("Evidence", (error, result)=>{
+        flow.searchResources("Evidence", (error, result) => {
             if (error) {
                 console.log(error);
             }
@@ -68,14 +68,14 @@ function list_evidences(message){
         });
     }
 }
-function get_a_evidence(message){
+function get_a_evidence(message) {
     evidenceService.mount(message.ssi, (err, mountedEntity) => {
-        if (err){
+        if (err) {
             console.log(err);
         }
         let flow = $$.flow.start(domainConfig.type);
         flow.init(domainConfig);
-        flow.getResourceById("Evidence", mountedEntity.objectId, (error, result)=>{
+        flow.getResourceById("Evidence", mountedEntity.objectId, (error, result) => {
             if (error) {
                 console.log(error);
             }
@@ -84,8 +84,47 @@ function get_a_evidence(message){
     });
 }
 
+function update_evidence(message) {
+    evidenceService.mountDevice(message.sReadSSI, (err, mountedEvidence) => {
+        if (err) {
+            console.log(err);
+        }
+        const entityId = mountedEvidence.objectId;
+        console.log(mountedEvidence);
+        let flow = $$.flow.start(domainConfig.type);
+        flow.init(domainConfig);
+        flow.updateResource("Evidence", entityId, mountedEvidence, (error, result) => {
+            if (error) {
+                console.log(error.status, error);
+            } else {
+                console.log(result);
+            }
+        });
+
+    });
+}
+
+function  delete_evidence(message) {
+    evidenceService.mount(message.ssi, (err, mountedEvidence) => {
+        if (err){
+            console.log(err);
+        }
+        let flow = $$.flow.start(domainConfig.type);
+        flow.init(domainConfig);
+        flow.deleteResource("Evidence", mountedEvidence.objectId, (error, result)=>{
+            if (error) {
+                console.log(error);
+            }
+            else console.log(result);
+        });
+    });
+}
+
+
 module.exports = {
     "new-evidence": new_evidence,
-    "list_evidences":list_evidences,
-    "get_a_evidence":get_a_evidence
+    "list_evidences": list_evidences,
+    "get_a_evidence": get_a_evidence,
+    "update_evidence": update_evidence,
+    "delete_evidence": delete_evidence
 }

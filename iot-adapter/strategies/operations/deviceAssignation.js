@@ -2,7 +2,6 @@ const commonServices = require("common-services")
 const { DeviceAssignationService, CommunicationService, HealthDataService} = commonServices;
 const healthDataService= new HealthDataService();
 const deviceAssignationService= new DeviceAssignationService();
-const communicationService = CommunicationService.getCommunicationServiceInstance();
 
 const domainConfig = {
     "type": "IotAdaptor",
@@ -33,6 +32,7 @@ function device_assignation(message){
                         if(err){
                             console.log(err);
                         }
+                        const communicationService = CommunicationService.getCommunicationServiceInstance();
                         communicationService.sendMessage(assignDevice.patientDID, { 
                             operation: "HealthData",
                             sReadSSI: data.sReadSSI

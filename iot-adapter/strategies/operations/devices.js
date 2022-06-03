@@ -1,7 +1,6 @@
 const commonServices = require("common-services")
 const { DeviceServices} = commonServices;
 const deviceService = new DeviceServices();
-// const communicationService = CommunicationService.getCommunicationServiceInstance();
 
 const domainConfig = {
     "type": "IotAdaptor",

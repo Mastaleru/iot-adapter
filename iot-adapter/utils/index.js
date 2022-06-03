@@ -1,6 +1,12 @@
-const getClusterDomainConfig = (domain) => {
-    const config = require("../../privatesky/modules/apihub/config");
-    return config.getConfig('componentsConfig', 'iot-adaptor', 'domainStrategies', domain);
-};
+const config = require("./../../env.json");
 
-module.exports = {getClusterDomainConfig: getClusterDomainConfig}
+const getDomainConfig = () => {
+    return {
+        "type": "IotAdaptor",
+        "option": {
+            "endpoint": `${config.IOT_ADAPTOR_PORT}`
+        }
+    }
+}
+
+module.exports = {getDomainConfig}
