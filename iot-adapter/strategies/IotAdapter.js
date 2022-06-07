@@ -108,9 +108,10 @@ $$.flow.describe('IotAdaptor', {
       // console.log("************* Assign Device ***********")
       // console.log(jsonData)
       const patientId = jsonData.patientDID;
+      const trialParticipantNumber = jsonData.trialParticipantNumber;
       const deviceId = jsonData.deviceId;
       try {
-        const patients = await this.mainDb.searchResourcesAsync('Patient', { where: { "did": patientId } });
+        const patients = await this.mainDb.searchResourcesAsync('Patient', { where: { "sk": trialParticipantNumber } });
         // console.log("************* Patients ***********")
         // console.log(patients)
         const devices = await this.mainDb.searchResourcesAsync('Device', { where: { "identifier.value": deviceId } });
@@ -128,7 +129,8 @@ $$.flow.describe('IotAdaptor', {
           subject: {
             reference: `Patient/${patient.did}`
           },
-          trialUid : device.trialUid
+          trialUid : device.trialUid,
+          trialParticipantNumber : trialParticipantNumber
         }
         device.isAssigned  = true;
 
