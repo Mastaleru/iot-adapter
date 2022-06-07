@@ -105,8 +105,8 @@ $$.flow.describe('IotAdaptor', {
         dsu.deleteResource(resourceType, id, callback);
     },
     assignDevice: async function (jsonData, callback) {
-      // console.log("************* Assign Device ***********")
-      // console.log(jsonData)
+      console.log("************* Assign Device ***********")
+      console.log(jsonData)
       const patientId = jsonData.patientDID;
       const trialParticipantNumber = jsonData.trialParticipantNumber;
       const deviceId = jsonData.deviceId;
@@ -115,11 +115,11 @@ $$.flow.describe('IotAdaptor', {
         // console.log("************* Patients ***********")
         // console.log(patients)
         const devices = await this.mainDb.searchResourcesAsync('Device', { where: { "identifier.value": deviceId } });
-        // console.log("************* Devices ***********")
+        console.log("************* Patient ***********")
         // console.log(devices)
         const patient = patients[0];
         const device = devices[0];
-
+        console.log(patient);
         const newDeviceRequest = {
           status: 'active',
           intent: 'original-order',
@@ -127,7 +127,7 @@ $$.flow.describe('IotAdaptor', {
             reference: `Device/${device.id}`
           },
           subject: {
-            reference: `Patient/${patient.did}`
+            reference: `Patient/${patient.sk}`
           },
           trialUid : device.trialUid,
           trialParticipantNumber : trialParticipantNumber
@@ -144,11 +144,6 @@ $$.flow.describe('IotAdaptor', {
             }
             console.log(result);
           });
-          // await this.mainDb.getObservationsByPatientDID('Observation', patientId,(error, response)=>{
-          //   console.log("************************ Observations *******************");
-          //   console.log(response);
-          //   console.log(error);
-          // });
           
         } catch (error) {
          console.log(error); 
