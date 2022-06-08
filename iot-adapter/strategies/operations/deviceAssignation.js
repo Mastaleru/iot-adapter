@@ -9,8 +9,8 @@ function device_assignation(message){
         if (err){
             console.log(err);
         }
-        console.log("********* Device Assigned **********")
-        console.log(assignDevice)
+        // console.log("********* Device Assigned **********")
+        // console.log(assignDevice)
         let flow = $$.flow.start(domainConfig.type);
         flow.init(domainConfig);
         flow.assignDevice(assignDevice, async (error, result)=>{
@@ -21,18 +21,23 @@ function device_assignation(message){
             else 
             {
                 
-                flow.getAllObservations("Observation", assignDevice.patientDID, (err, observations)=>{
-                    console.log(observations.results);
-                    healthDataService.saveObservation(observations.results, (err, data)=> {
-                        if(err){
-                            console.log(err);
-                        }
-                        const communicationService = CommunicationService.getCommunicationServiceInstance();
-                        communicationService.sendMessage(assignDevice.patientDID, { 
-                            operation: "HealthData",
-                            sReadSSI: data.sReadSSI
+                flow.getObservationsByTrialParticipantNumber("Observation", assignDevice.trialParticipantNumber, (err, observations)=>{
+                    
+                    if(err){
+                        console.log(err.message);
+                    }
+                    else{                        
+                        healthDataService.saveObservation(observations.results, (err, data)=> {
+                            if(err){
+                                console.log(err.message);
+                            }
+                            const communicationService = CommunicationService.getCommunicationServiceInstance();
+                            communicationService.sendMessage(assignDevice.patientDID, { 
+                                operation: "HealthData",
+                                sReadSSI: data.sReadSSI
+                            });
                         });
-                    });
+                    }
                 });
                 
             }

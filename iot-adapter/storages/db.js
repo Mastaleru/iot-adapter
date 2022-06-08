@@ -68,7 +68,7 @@ class DbStorage {
     this.client
       .post(`/classes/${type}`, resource)
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         let _resource = _self.normalizeSingleResponse(response);
         _self.getResourceById(type, _resource.id, callback);         
       })
@@ -209,7 +209,7 @@ class DbStorage {
 
   getObservationByPatientId(type, id, callback) {
     const _self = this;
-
+    
     this.client
       .get(`/classes/${type}?where={"sk":{"$text":{"$search":{"$term":${id}}}}}`)
       .then((response) => {
@@ -219,11 +219,120 @@ class DbStorage {
         callback(_self.normalizeErrorResponse(error), null);
       });
   }
-  getObservationsByPatientDID(type, did, callback) {
+  getObservationsByTrialParticipantNumber(type, did, callback) {
     const _self = this;
-    let ref = "Patient/"+did;
+    // console.log("******************* DB.JS ******************")
+    // console.log(did);
+
+    if(did == "10001"){
+      this.client
+      .get('/classes/Observation?where={"sk":{"$text":{"$search":{"$term":"10001"}}}}')
+      .then((response) => {
+        callback(undefined, _self.normalizeSingleResponse(response));
+      })
+      .catch((error) => {
+        callback(_self.normalizeErrorResponse(error), null);
+      });
+    }
+    else if(did == "10002"){
+      this.client
+      .get('/classes/Observation?where={"sk":{"$text":{"$search":{"$term":"10002"}}}}')
+      .then((response) => {
+        callback(undefined, _self.normalizeSingleResponse(response));
+      })
+      .catch((error) => {
+        callback(_self.normalizeErrorResponse(error), null);
+      });
+    }
+    else if(did == "10003"){
+      this.client
+      .get('/classes/Observation?where={"sk":{"$text":{"$search":{"$term":"10003"}}}}')
+      .then((response) => {
+        callback(undefined, _self.normalizeSingleResponse(response));
+      })
+      .catch((error) => {
+        callback(_self.normalizeErrorResponse(error), null);
+      });
+    }
+    else if(did == "10004"){
+      this.client
+      .get('/classes/Observation?where={"sk":{"$text":{"$search":{"$term":"10004"}}}}')
+      .then((response) => {
+        callback(undefined, _self.normalizeSingleResponse(response));
+      })
+      .catch((error) => {
+        callback(_self.normalizeErrorResponse(error), null);
+      });
+    }
+    else if(did == "10005"){
+      this.client
+      .get('/classes/Observation?where={"sk":{"$text":{"$search":{"$term":"10005"}}}}')
+      .then((response) => {
+        callback(undefined, _self.normalizeSingleResponse(response));
+      })
+      .catch((error) => {
+        callback(_self.normalizeErrorResponse(error), null);
+      });
+    }
+    else if(did == "10006"){
+      this.client
+      .get('/classes/Observation?where={"sk":{"$text":{"$search":{"$term":"10006"}}}}')
+      .then((response) => {
+        callback(undefined, _self.normalizeSingleResponse(response));
+      })
+      .catch((error) => {
+        callback(_self.normalizeErrorResponse(error), null);
+      });
+    }
+    else if(did == "10007"){
+      this.client
+      .get('/classes/Observation?where={"sk":{"$text":{"$search":{"$term":"10007"}}}}')
+      .then((response) => {
+        callback(undefined, _self.normalizeSingleResponse(response));
+      })
+      .catch((error) => {
+        callback(_self.normalizeErrorResponse(error), null);
+      });
+    }
+    else if(did == "10008"){
+      this.client
+      .get('/classes/Observation?where={"sk":{"$text":{"$search":{"$term":"10008"}}}}')
+      .then((response) => {
+        callback(undefined, _self.normalizeSingleResponse(response));
+      })
+      .catch((error) => {
+        callback(_self.normalizeErrorResponse(error), null);
+      });
+    }
+    else if(did == "10009"){
+      this.client
+      .get('/classes/Observation?where={"sk":{"$text":{"$search":{"$term":"10009"}}}}')
+      .then((response) => {
+        callback(undefined, _self.normalizeSingleResponse(response));
+      })
+      .catch((error) => {
+        callback(_self.normalizeErrorResponse(error), null);
+      });
+    }
+    else if(did == "10010"){
+      this.client
+      .get('/classes/Observation?where={"sk":{"$text":{"$search":{"$term":"10010"}}}}')
+      .then((response) => {
+        callback(undefined, _self.normalizeSingleResponse(response));
+      })
+      .catch((error) => {
+        callback(_self.normalizeErrorResponse(error), null);
+      });
+    }
+    
+  }
+  getObservationByPatientID(type, id, callback) {
+    const _self = this;
+    var linkData = "patient/"+id;
+    console.log("************* Get Observations by Patient ID *************")
+    console.log(linkData);
     this.client
-      .get(`/classes/${type}?where={"sk":{"$text":{"$search":{"$term":${ref}}}}}`)
+      .get(`/classes/Observation?where={"sk":{"$text":{"$search":{"$term":${linkData}}}}}`)
       .then((response) => {
         callback(undefined, _self.normalizeSingleResponse(response));
       })
@@ -231,14 +340,47 @@ class DbStorage {
         callback(_self.normalizeErrorResponse(error), null);
       });
   }
-  getAllObservations(type, did, callback) {
+  getAllObservations(type, id, callback) {
+
+    // const _self = this;
+    // var linkData = 'Patient/10001';
+    // var observation = _self.searchResourcesAsync('Observation', );
+    console.log("******************* DB.JS ******************")
+    // _self.searchResources("Observation",  linkData, function(error, resources){
+    //   if(error){
+    //     console.log(error);
+    //     callback(error, null);
+    //   } else {
+    //     console.log(resources);
+    //     if (resources && resources.length > 0) {
+    //       callback(undefined, resources[0]);
+    //     } else {
+    //       callback(undefined, null);
+    //     }
+    //   }
+    // });
+    // callback(undefined, observation);
+    // var params =  'where = {subject.reference=""}'
+    // _self.searchResources(type, params, function(error, resources){
+    //   if(error){
+    //     callback(error, null);
+    //   } else {
+    //     if (resources && resources.length > 0) {
+    //       callback(undefined, resources[0]);
+    //     } else {
+    //       callback(undefined, null);
+    //     }
+    //   }
+    // });
     const _self = this;
     this.client
-      .get(`/classes/Observation?where={"sk":{"$text":{"$search":{"$term":"patient/6VHBJrEp4s"}}}}`)
+      .get('/classes/Observation?where={"sk":{"$text":{"$search":{"$term":"10005"}}}}')
       .then((response) => {
+        console.log(_self.normalizeSingleResponse(response));
         callback(undefined, _self.normalizeSingleResponse(response));
       })
       .catch((error) => {
+        console.log("Something Error!")
         callback(_self.normalizeErrorResponse(error), null);
       });
   }

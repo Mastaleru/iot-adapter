@@ -49,9 +49,9 @@ $$.flow.describe('IotAdaptor', {
     getResourceBySk: function (resourceType, id, callback) {
       this.mainDb.getResourceBySk(resourceType, id, callback);
   },
-    getObservationByPatientId: function (resourceType, id, callback) {
+  getObservationsByTrialParticipantNumber: function (resourceType, id, callback) {
       //this.fhir.getResourceById(resourceType, id, callback);
-        this.mainDb.getObservationByPatientId(resourceType, id, callback);
+        this.mainDb.getObservationsByTrialParticipantNumber(resourceType, id, callback);
     },
     getAllObservations: function (resourceType, id, callback) {
         this.mainDb.getAllObservations(resourceType, "Patient/6VHBJrEp4s", callback);
@@ -105,21 +105,22 @@ $$.flow.describe('IotAdaptor', {
         dsu.deleteResource(resourceType, id, callback);
     },
     assignDevice: async function (jsonData, callback) {
-      console.log("************* Assign Device ***********")
+      console.log("************* Assign Device  ***********")
       console.log(jsonData)
       const patientId = jsonData.patientDID;
       const trialParticipantNumber = jsonData.trialParticipantNumber;
       const deviceId = jsonData.deviceId;
       try {
         const patients = await this.mainDb.searchResourcesAsync('Patient', { where: { "sk": trialParticipantNumber } });
-        // console.log("************* Patients ***********")
-        // console.log(patients)
+        console.log("************* Patients ***********")
+        console.log(patients)
         const devices = await this.mainDb.searchResourcesAsync('Device', { where: { "identifier.value": deviceId } });
-        console.log("************* Patient ***********")
+        // console.log("************* Patient ***********")
         // console.log(devices)
         const patient = patients[0];
         const device = devices[0];
-        console.log(patient);
+        // console.log(patient);
+
         const newDeviceRequest = {
           status: 'active',
           intent: 'original-order',
