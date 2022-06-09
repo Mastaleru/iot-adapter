@@ -20,7 +20,8 @@ function add_device(message){
             "modelNumber": mountedDevice.modelNumber,
             "serialNumber": mountedDevice.deviceId,
             "trialUid": mountedDevice.trialUid,
-            "isAssigned": mountedDevice.isAssigned
+            "isAssigned": mountedDevice.isAssigned,
+            "assignedTo":""
           };
         let flow = $$.flow.start(domainConfig.type);
         flow.init(domainConfig);

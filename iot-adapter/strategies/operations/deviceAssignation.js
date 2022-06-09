@@ -22,7 +22,6 @@ function device_assignation(message){
             {
                 
                 flow.getObservationsByTrialParticipantNumber("Observation", assignDevice.trialParticipantNumber, (err, observations)=>{
-                    
                     if(err){
                         console.log(err.message);
                     }

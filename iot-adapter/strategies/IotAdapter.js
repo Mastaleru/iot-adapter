@@ -104,16 +104,34 @@ $$.flow.describe('IotAdaptor', {
         });
         dsu.deleteResource(resourceType, id, callback);
     },
+    
+    deassignDevice: async function (jsonData, callback) {
+      var device = {
+        isAssigned:false,
+        assignedTo : ""
+      };
+
+      try {
+        this.mainDb.updateResource("Device", jsonData.id, device, (error, result)=>{
+          console.log("********** Update Resource  Deassign *********")
+          if(error){
+            console.log(error)
+          }
+          console.log(result);
+        });
+        
+      } catch (error) {
+       console.log(error); 
+      }
+    },
     assignDevice: async function (jsonData, callback) {
-      console.log("************* Assign Device  ***********")
-      console.log(jsonData)
+      // console.log("************* Assign Device  ***********")
+      // console.log(jsonData)
       const patientId = jsonData.patientDID;
       const trialParticipantNumber = jsonData.trialParticipantNumber;
       const deviceId = jsonData.deviceId;
       try {
         const patients = await this.mainDb.searchResourcesAsync('Patient', { where: { "sk": trialParticipantNumber } });
-        console.log("************* Patients ***********")
-        console.log(patients)
         const devices = await this.mainDb.searchResourcesAsync('Device', { where: { "identifier.value": deviceId } });
         // console.log("************* Patient ***********")
         // console.log(devices)
@@ -134,6 +152,7 @@ $$.flow.describe('IotAdaptor', {
           trialParticipantNumber : trialParticipantNumber
         }
         device.isAssigned  = true;
+        device.assignedTo  = trialParticipantNumber;
 
         let deviceRequest, healthDataDsu, observations;
         const dsuDbName = 'sharedDB';
