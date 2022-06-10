@@ -11,8 +11,10 @@ function add_device(message){
         }
         console.log("**************** Data from Clinical Site SSAPP Device  ******************");
         console.log(mountedDevice);
+
         var deviceData = {
             "resourceType": mountedDevice.resourceType,
+            "deviceType": mountedDevice.deviceType,
             "identifier": mountedDevice.identifier,
             "status": mountedDevice.status,
             "manufacturer": mountedDevice.manufacturer,
