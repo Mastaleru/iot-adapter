@@ -25,14 +25,17 @@ function device_assignation(message){
                     if(err){
                         console.log(err.message);
                     }
-                    else{                        
+                   
+                    else{                 
+                        console.log(observations)  
+
                         healthDataService.saveObservation(observations.results, (err, data)=> {
                             if(err){
                                 console.log(err.message);
                             }
                             const communicationService = CommunicationService.getCommunicationServiceInstance();
                             communicationService.sendMessage(assignDevice.patientDID, { 
-                                operation: "HealthData",
+                                operation: "new_healthdata",
                                 sReadSSI: data.sReadSSI
                             });
                         });
