@@ -19,15 +19,13 @@ function new_study(message) {
         if (err) {
             console.log(err);
         }
-        //console.log("looking for this data: ", mountedStudy.data)
+        console.log("looking for this data: ", mountedStudy.data)
 
         healthDataService.getAllObservations((err, allPatientsObservations)=>{
             if (err){
                 return console.log(err);
             }
-            //console.log("All patients with data are: ", allPatientsObservations.length);
             allPatientsObservations.forEach(patientObservations => {
-                //console.log("observations for this patient are: ", patientObservations.length)
                 patientObservations.forEach(observation => {
                     let patientTPNumber = observation.subject.reference.slice(8);
                     let patientDataType = observation.code.text;
@@ -61,17 +59,12 @@ function new_study(message) {
                     }
                     DPs = data;
                     DPs.forEach(dp => {
-                        //console.log(dp)
                         candidatePatientsFound.forEach(patient => {
-                            // console.log(dp.tp.did);
-                            // console.log(patient.patientDID);
-                            if ((dp.tp.did === patient.patientDID) && (dp.perm.wantToShare===true) ) {
-                                // console.log(dp.perm.wantToShare);
-                                // console.log(patient.patientTPNumber);
-                                // console.log(patient)
+                            if ((dp.tp.did === patient.patientDID) && (dp.perm.wantToShare===true) && (patient.patientDID!=undefined) ) {
+                                console.log(`Candidate patient that wants to share found: ${JSON.stringify(patient.patientDID)}`);
                                 let communicationService = CommunicationService.getCommunicationServiceInstance();
                                 let data = {
-                                    operation: "DataMatchMaking",
+                                    operation: "datamatchmaking",
                                     patient: patient,
                                     study: mountedStudy
                                 }
