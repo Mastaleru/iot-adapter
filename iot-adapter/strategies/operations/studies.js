@@ -60,7 +60,7 @@ function new_study(message) {
                     DPs = data;
                     DPs.forEach(dp => {
                         candidatePatientsFound.forEach(patient => {
-                            if ((dp.tp.did === patient.patientDID) && (dp.perm.wantToShare===true) && (patient.patientDID!=undefined) ) {
+                            if ((dp.tp.did === patient.patientDID) && (dp.contactMe===true) && (patient.patientDID!=undefined) ) {
                                 console.log(`Candidate patient that wants to share found: ${JSON.stringify(patient.patientDID)}`);
                                 let communicationService = CommunicationService.getCommunicationServiceInstance();
                                 let data = {
