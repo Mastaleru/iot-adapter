@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const axios = require('axios');
+var qs = require('querystring');
 
 class DbStorage {
   constructor(config) {
@@ -154,6 +155,17 @@ class DbStorage {
         callback(_self.normalizeErrorResponse(error), null);
       });
   }
+  deleteDevice(id, callback) {
+    const _self = this;
+    this.client
+      .delete(`/classes/Device/${id}`)
+      .then((response) => {
+        callback(undefined, {});
+      })
+      .catch((error) => {
+        callback(_self.normalizeErrorResponse(error), null);
+      });
+  }
 
   findOrCreateResource(type, jsonData, params, callback) {
     const _self = this;
@@ -221,9 +233,7 @@ class DbStorage {
   }
   getObservationsByTrialParticipantNumber(type, did, callback) {
     const _self = this;
-    // console.log("******************* DB.JS ******************")
-    // console.log(did);
-
+    
     if(did == "10001"){
       this.client
       .get('/classes/Observation?where={"sk":{"$text":{"$search":{"$term":"10001"}}}}')
@@ -333,6 +343,25 @@ class DbStorage {
     console.log(linkData);
     this.client
       .get(`/classes/Observation?where={"sk":{"$text":{"$search":{"$term":${linkData}}}}}`)
+      .then((response) => {
+        callback(undefined, _self.normalizeSingleResponse(response));
+      })
+      .catch((error) => {
+        callback(_self.normalizeErrorResponse(error), null);
+      });
+  }
+
+  getDeviceByUID(id, callback) {
+    const _self = this;
+    console.log("************* Get Device by UID *************")
+    console.log(id);
+    var query = qs.stringify({
+      where: JSON.stringify({
+          uid: id
+      })
+  });
+    this.client
+      .get(`/classes/Device?${query}`)
       .then((response) => {
         callback(undefined, _self.normalizeSingleResponse(response));
       })

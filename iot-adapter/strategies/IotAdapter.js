@@ -60,6 +60,14 @@ $$.flow.describe('IotAdaptor', {
         //this.fhir.deleteResource(resourceType, id, callback);
         this.mainDb.deleteResource(resourceType, id, callback);
     },
+    deleteDevice: function(resourceType, id, callback) {
+      //this.fhir.deleteResource(resourceType, id, callback);
+      this.mainDb.deleteResource(resourceType, id, callback);
+    },
+    getDeviceByUID: function(id, callback) {
+      //this.fhir.deleteResource(resourceType, id, callback);
+      this.mainDb.getDeviceByUID(id, callback);
+    },
     createDSU: function (callback) {
         dsuService.createWalletDB('sharedDB')
           .then((response) => {

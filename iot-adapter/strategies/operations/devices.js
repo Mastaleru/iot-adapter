@@ -23,6 +23,7 @@ function add_device(message){
             "serialNumber": mountedDevice.deviceId,
             "trialUid": mountedDevice.trialUid,
             "isAssigned": mountedDevice.isAssigned,
+            "uid": mountedDevice.uid,
             "assignedTo":""
           };
         let flow = $$.flow.start(domainConfig.type);
@@ -69,7 +70,7 @@ function update_device(message){
 }
 
 function get_a_device(message){
-    deviceService.mount(message.ssi, (err, mountedEntity) => {
+    deviceService.mountDevice(message.ssi, (err, mountedEntity) => {
         if (err){
             console.log(err);
         }
@@ -85,21 +86,30 @@ function get_a_device(message){
 }
 
 function delete_device(message){
-    console.log("**************** New Delete Device Function  ******************");
-
-    deviceService.mount(message.ssi, (err, mountedEntity) => {
-        if (err){
-            console.log(err);
+    console.log("**************** Delete Device Function  ******************");
+    // console.log(message);
+    let flow = $$.flow.start(domainConfig.type);
+    flow.init(domainConfig);
+    flow.getDeviceByUID(message.uid, (error, deviceData)=>{
+        console.log(deviceData);
+        if (error) {
+            console.log(error);
         }
-        let flow = $$.flow.start(domainConfig.type);
-        flow.init(domainConfig);
-        flow.deleteResource("Device", mountedEntity.objectId, (error, result)=>{
-            if (error) {
-                console.log(error);
-            }
-            else console.log(result);
-        });
+        else {
+            let test = deviceData.results;
+            let data = test[0];
+            console.log(data.objectId)
+            flow.deleteResource("Device",data.objectId, (error, result)=>{
+                if (error) {
+                    console.log(error);
+                }
+                else console.log(result);
+            });
+        }
     });
+    
+
+    
 }
 
 module.exports = {
