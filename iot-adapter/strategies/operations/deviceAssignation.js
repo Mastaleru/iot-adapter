@@ -34,7 +34,8 @@ function device_assignation(message){
                             const communicationService = CommunicationService.getCommunicationServiceInstance();
                             communicationService.sendMessage(assignDevice.patientDID, { 
                                 operation: "new_healthdata",
-                                sReadSSI: data.sReadSSI
+                                sReadSSI: data.sReadSSI,
+                                message: "Your new data is available now!"
                             });
                         });
                     }
