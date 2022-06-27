@@ -65,8 +65,8 @@ function new_study(message) {
                                 let communicationService = CommunicationService.getCommunicationServiceInstance();
                                 let data = {
                                     operation: "datamatchmaking",
-                                    patient: patient,
-                                    study: mountedStudy
+                                    patientInformation: patient,
+                                    studysReadSSI: message.ssi
                                 }
                                 communicationService.sendMessage(patient.patientDID, data)
                             }
