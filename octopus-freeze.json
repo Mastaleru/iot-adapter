@@ -9,7 +9,7 @@
                     "type": "smartClone",
                     "target": ".",
                     "collectLog": false,
-                    "commit": "c7dd4d8fa1e4f56f9e1b6ff9f83e639ddd4dbc3f"
+                    "commit": "8ed5e63573cafcbd8885f45796887ee51bec89d0"
                 },
                 {
                     "type": "execute",
@@ -25,7 +25,7 @@
                     "type": "smartClone",
                     "target": ".",
                     "collectLog": false,
-                    "commit": "fd47b9b40eef1568cb5c99c49ec106e580f42cde"
+                    "commit": "d4046958eec43e7c1fdf7508fea3574240043f40"
                 },
                 {
                     "type": "execute",
@@ -48,7 +48,26 @@
             ]
         }
     ],
-    "build": [],
+    "build": [
+        {
+            "name": "building common-services",
+            "actions": [
+                {
+                    "type": "execute",
+                    "cmd": "cd common-services && npm run build"
+                }
+            ]
+        },
+        {
+            "name": "building iot-adapter",
+            "actions": [
+                {
+                    "type": "execute",
+                    "cmd": "cd iot-adapter && npm run build"
+                }
+            ]
+        }
+    ],
     "install-mobile": [],
     "build-mobile": [],
     "docs": []
