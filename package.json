@@ -19,7 +19,6 @@
   },
   "homepage": "https://github.com/paiusCatalin/iot-adapter#readme",
   "dependencies": {
-    "octopus": "git+http://github.com/privatesky/octopus.git",
-    "querystring": "^0.2.1"
+    "octopus": "git+http://github.com/privatesky/octopus.git"
   }
 }

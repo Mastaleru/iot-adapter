@@ -233,7 +233,19 @@ class DbStorage {
   }
   getObservationsByTrialParticipantNumber(type, did, callback) {
     const _self = this;
-    
+    // var query = qs.stringify({
+    //   where: JSON.stringify({
+    //       sk: `{"$text":{"$search":{"$term":${did}}}}`
+    //   })
+    // });
+    // this.client
+    //   .get(`/classes/Observation?${query}`)
+    //   .then((response) => {
+    //     callback(undefined, _self.normalizeSingleResponse(response));
+    //   })
+    //   .catch((error) => {
+    //     callback(_self.normalizeErrorResponse(error), null);
+    //   });
     if(did == "10001"){
       this.client
       .get('/classes/Observation?where={"sk":{"$text":{"$search":{"$term":"10001"}}}}')
@@ -359,7 +371,7 @@ class DbStorage {
       where: JSON.stringify({
           uid: id
       })
-  });
+    });
     this.client
       .get(`/classes/Device?${query}`)
       .then((response) => {
