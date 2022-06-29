@@ -27,6 +27,13 @@ async function setupIoTAdaptorEnvironment() {
     await $$.promisify(dt.initialiseBuildWallet)();
     const mainDSU = await $$.promisify(scAPI.getMainDSU)();
 
+    if(process.env.DEV){
+        mainDSU.getKeySSIAsString((err, keySSI) => {
+            console.log("IOT Adapter wallet seedSSI:", keySSI);
+        })
+    }
+
+
     let initialEnv = JSON.parse(await $$.promisify(mainDSU.readFile)("environment.json"));
 
     console.log("init", initialEnv)
