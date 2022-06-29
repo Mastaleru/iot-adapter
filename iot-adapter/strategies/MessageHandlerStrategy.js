@@ -18,7 +18,7 @@ async function messageHandlerStrategy(message) {
         operations[message.operation](message);
     } else {
         console.log("*******************************");
-        console.log(`Received message from ${message.senderIdentity}`);
+        console.log(`Received message from ${message.senderIdentity} with operation ${message.operation} that cannot be handled`);
         console.log("*******************************");
         message.operation = "Could not handle message. Unknown operation";
         await communicationService.sendMessage(message.senderIdentity, message);
