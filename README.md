@@ -1,8 +1,8 @@
 # iot-adapter
 
-*iot-adapter* is a component, part of *iot-pmed-workspace*
+*iot-adapter* is a component, part of *eco-iot-pmed-workspace*
 
-For more details about the *iot-pmed-workspace* check [iot-pmed-workspace](https://github.com/PharmaLedger-ImI/iot-pmed-workspace).
+For more details about the *eco-iot-pmed-workspace* check [eco-iot-pmed-workspace](https://github.com/PharmaLedger-ImI/eco-iot-pmed-workspace).
 
 ## Installation
 ### Step 1: Clone the repository

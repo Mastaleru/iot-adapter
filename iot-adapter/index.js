@@ -13,8 +13,8 @@ require(commonServicesBundle);
 const commonServices = require("common-services")
 const {DidService, MessageHandlerService} = commonServices;
 const MessageHandlerStrategy = require("./strategies/MessageHandlerStrategy");
-const DOMAIN = "iot";
 const didType = "ssi:name";
+const DOMAIN = process.env.DID_DOMAIN;
 const publicName = process.env.IOT_ADAPTOR_DID;
 
 const express = require('express');
@@ -36,11 +36,10 @@ async function setupIoTAdaptorEnvironment() {
 
     let initialEnv = JSON.parse(await $$.promisify(mainDSU.readFile)("environment.json"));
 
-    console.log("init", initialEnv)
+    console.log("init", initialEnv);
     if (!initialEnv.did) {
         initialEnv.did = `did:${didType}:${DOMAIN}:${publicName}`;
         initialEnv.didDomain = DOMAIN;
-        initialEnv.vaultDomain = DOMAIN;
         await $$.promisify(mainDSU.writeFile)("environment.json", JSON.stringify(initialEnv));
         scAPI.refreshSecurityContext();
     }
@@ -177,7 +176,7 @@ function corsPolicyHandler(request, response) {
     response.end();
 }
 
-function getAdaptorIdentity(request, response, next) {
+function getAdaptorIdentity(request, response) {
     response.setHeader('Content-Type', 'application/json');
     const sc = scAPI.getSecurityContext();
 
