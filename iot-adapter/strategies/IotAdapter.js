@@ -146,67 +146,80 @@ $$.flow.describe('IotAdaptor', {
         const patient = patients[0];
         const device = devices[0];
         // console.log(patient);
-
-        const newDeviceRequest = {
-          status: 'active',
-          intent: 'original-order',
-          codeReference: {
-            reference: `Device/${device.id}`
-          },
-          subject: {
-            reference: `Patient/${patient.sk}`
-          },
-          trialUid : device.trialUid,
-          trialParticipantNumber : trialParticipantNumber
-        }
-        device.isAssigned  = true;
-        device.assignedTo  = trialParticipantNumber;
-
-        let deviceRequest, healthDataDsu, observations;
-        const dsuDbName = 'sharedDB';
-        try {
-          this.mainDb.updateResource("Device", device.id, device, (error, result)=>{
-            console.log("********** Update Resource *********")
-            if(error){
-              console.log(error)
-            }
-            console.log(result);
-          });
-          
-        } catch (error) {
-         console.log(error); 
-        }
-        // original script for multi-patient
-        deviceRequest = await this.mainDb.findResourceAsync('DeviceRequest', { where: { "status": "active", "codeReference.reference": `Device/${device.id}`, "subject.reference": `Patient/${patient.id}` } });
-        
-       
-        // Demo Script for testing
-        // deviceRequest = await this.mainDb.findResourceAsync('DeviceRequest', { where: { "status": "active", "codeReference.reference": `Device/${device.id}`, "subject.reference": `Patient/${patient.id}` } });
-
-        if(!deviceRequest) {
-          deviceRequest = await this.mainDb.createResourceAsync('DeviceRequest', newDeviceRequest);
-          dsu = await dsuService.createWalletDB(dsuDbName);
-          const newHeathDataDsu = {
-            codeReference: {
-              reference: `DeviceRequest/${deviceRequest.id}`
-            },
-            seedSSI: dsu.seedSSI,
-            sReadSSI: dsu.sReadSSI,
-            dbName: dsuDbName
+        if(!patient){
+          console.log("No Patient register!")
+          let err = {
+            name: "Not Found!",
+            message: "No Patient is registered with this TP!",
+            status: 404
           }
-          healthDataDsu = await this.mainDb.createResourceAsync('HealthDataDsu', newHeathDataDsu);
-        } else {
-          healthDataDsu = await this.mainDb.findResourceAsync('HealthDataDsu', { where: { "codeReference.reference": `DeviceRequest/${deviceRequest.id}` } });
+          callback(err, undefined);
+          
         }
+        else {
+
+          const newDeviceRequest = {
+            status: 'active',
+            intent: 'original-order',
+            codeReference: {
+              reference: `Device/${device.id}`
+            },
+            subject: {
+              reference: `Patient/${patient.sk}`
+            },
+            trialUid : device.trialUid,
+            trialParticipantNumber : trialParticipantNumber
+          }
+          device.isAssigned  = true;
+          device.assignedTo  = trialParticipantNumber;
+
+          let deviceRequest, healthDataDsu, observations;
+          const dsuDbName = 'sharedDB';
+          try {
+            this.mainDb.updateResource("Device", device.id, device, (error, result)=>{
+              console.log("********** Update Resource *********")
+              if(error){
+                console.log(error)
+              }
+              console.log(result);
+            });
+            
+          } catch (error) {
+          console.log(error); 
+          }
+          // original script for multi-patient
+          deviceRequest = await this.mainDb.findResourceAsync('DeviceRequest', { where: { "status": "active", "codeReference.reference": `Device/${device.id}`, "subject.reference": `Patient/${patient.id}` } });
+          
         
-        callback(undefined, {
-          deviceRequest: deviceRequest,
-          healthDataDsu: healthDataDsu
-        });
+          // Demo Script for testing
+          // deviceRequest = await this.mainDb.findResourceAsync('DeviceRequest', { where: { "status": "active", "codeReference.reference": `Device/${device.id}`, "subject.reference": `Patient/${patient.id}` } });
+
+          if(!deviceRequest) {
+            deviceRequest = await this.mainDb.createResourceAsync('DeviceRequest', newDeviceRequest);
+            dsu = await dsuService.createWalletDB(dsuDbName);
+            const newHeathDataDsu = {
+              codeReference: {
+                reference: `DeviceRequest/${deviceRequest.id}`
+              },
+              seedSSI: dsu.seedSSI,
+              sReadSSI: dsu.sReadSSI,
+              dbName: dsuDbName
+            }
+            healthDataDsu = await this.mainDb.createResourceAsync('HealthDataDsu', newHeathDataDsu);
+          } else {
+            healthDataDsu = await this.mainDb.findResourceAsync('HealthDataDsu', { where: { "codeReference.reference": `DeviceRequest/${deviceRequest.id}` } });
+          }
+          
+          callback(undefined, {
+            deviceRequest: deviceRequest,
+            healthDataDsu: healthDataDsu
+          });
+      }
       } catch (error) {
         console.error(error);
         callback(error, undefined);
       }
+
     },
     createEvidenceDsu: async function (jsonData, callback) {
       const resources = await this.mainDb.searchResourcesAsync('EvidenceDataDsu', { where: {  } });
