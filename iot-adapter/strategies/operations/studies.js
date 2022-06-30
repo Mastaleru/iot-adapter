@@ -26,7 +26,7 @@ function new_study(message) {
                 return console.log(err);
             }
             allPatientsObservations.forEach(patientObservations => {
-                patientObservations.forEach(observation => {
+                patientObservations.every(observation => {
                     let patientTPNumber = observation.subject.reference.slice(8);
                     let patientDataType = observation.code.text;
                     if (patientDataType === mountedStudy.data ) {
@@ -35,7 +35,9 @@ function new_study(message) {
                             patientDataType: patientDataType
                         };
                         candidatePatientsFound.push(candidatePatientFound);
+                        return false;
                     }
+                    return true;
                 });
             });
 
