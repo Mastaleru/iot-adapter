@@ -44,7 +44,8 @@ function dp_updated_add(message) {
                         let patientTPNumber = observation.subject.reference.slice(8);
                         let observationDataType = observation.code.text;
                         if (patientTPNumber === matchTPNumber &&  observationDataType === requestedDataType) {
-                            observation.subject.reference = "N/A";
+                            observation.subject.reference = match.patient.patientDID;
+                            observation.studyUID = message.studyUID;
                             observation.objectId = "N/A";
                             observation.sk = "N/A";
                             observation.identifier = "N/A";
