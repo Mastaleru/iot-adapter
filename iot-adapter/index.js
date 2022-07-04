@@ -36,6 +36,7 @@ async function setupIoTAdaptorEnvironment() {
 
     let initialEnv = JSON.parse(await $$.promisify(mainDSU.readFile)("environment.json"));
 
+
     console.log("init", initialEnv);
     if (!initialEnv.did) {
         initialEnv.did = `did:${didType}:${DOMAIN}:${publicName}`;
@@ -44,6 +45,8 @@ async function setupIoTAdaptorEnvironment() {
         scAPI.refreshSecurityContext();
     }
     MessageHandlerService.init(MessageHandlerStrategy);
+    console.log("environment domain:  ")
+    console.log(initialEnv.didDomain)
 }
 
 async function IotAdaptor(server) {
