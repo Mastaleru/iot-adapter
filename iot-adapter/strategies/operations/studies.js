@@ -21,7 +21,8 @@ function new_study(message) {
         }
         console.log("looking for this data: ", mountedStudy.data)
 
-        healthDataService.getAllObservations((err, allPatientsObservations)=>{
+        healthDataService.getAllObservations((err, allPatientsObservationsDsu)=>{
+            let allPatientsObservations = allPatientsObservationsDsu.observations;
             if (err){
                 return console.log(err);
             }

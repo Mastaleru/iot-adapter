@@ -34,7 +34,8 @@ function dp_updated_add(message) {
             let requestedDataType = studyFullData.data;
            
             // Find avaiable Data and Create  Permissioned data DSU
-            healthDataService.getAllObservations((err, allPatientsObservations)=>{
+            healthDataService.getAllObservations((err, allPatientsObservationsDsu)=>{
+                let allPatientsObservations = allPatientsObservationsDsu.observations;
                 if (err){
                     return console.log(err);
                 }
