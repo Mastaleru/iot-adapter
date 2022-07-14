@@ -6,6 +6,7 @@
     "dev-install": "node ./bin/mkDevEnv.js && npm install",
     "postinstall": "node ./node_modules/octopus/scripts/setEnv --file=../../../env.json \"node ./node_modules/octopus/scripts/run\"",
     "freeze": "node ./node_modules/octopus/scripts/freeze dependencies install-mobile",
+    "tag-freeze": "node ./node_modules/octopus/scripts/tagFreeze dependencies install-mobile",
     "iot-adapter-server": "node ./node_modules/octopus/scripts/setEnv --file=../../../env.json \"cd iot-adapter && npm run start\""
   },
   "repository": {
