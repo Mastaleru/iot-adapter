@@ -34,14 +34,13 @@ function dp_updated_add(message) {
             let requestedDataType = studyFullData.data;
            
             // Find avaiable Data and Create  Permissioned data DSU
-            healthDataService.getAllObservations((err, allPatientsObservationsDsu)=>{
-                let allPatientsObservations = allPatientsObservationsDsu.observations;
+            healthDataService.getAllObservations((err, allPatientsObservations)=>{
                 if (err){
                     return console.log(err);
                 }
                 let collectedObservations = [];
                 allPatientsObservations.forEach(patientObservations => {
-                    patientObservations.forEach(observation => {
+                    patientObservations.observations.forEach(observation => {
                         let patientTPNumber = observation.subject.reference.slice(8);
                         let observationDataType = observation.code.text;
                         if (patientTPNumber === matchTPNumber &&  observationDataType === requestedDataType) {

@@ -21,13 +21,13 @@ function new_study(message) {
         }
         console.log("looking for this data: ", mountedStudy.data)
 
-        healthDataService.getAllObservations((err, allPatientsObservationsDsu)=>{
-            let allPatientsObservations = allPatientsObservationsDsu.observations;
+        healthDataService.getAllObservations((err, allPatientsObservations)=>{
             if (err){
                 return console.log(err);
             }
             allPatientsObservations.forEach(patientObservations => {
-                patientObservations.every(observation => {
+                console.log(patientObservations.observations.length);
+                patientObservations.observations.every(observation => {
                     let patientTPNumber = observation.subject.reference.slice(8);
                     let patientDataType = observation.code.text;
                     if (patientDataType === mountedStudy.data ) {
@@ -54,6 +54,7 @@ function new_study(message) {
                         }
                     })
                 })
+
                 console.log(`Candidate patients found: ${JSON.stringify(candidatePatientsFound)}`);
 
                 dpService.getDPs((err, data) => {
