@@ -9,6 +9,8 @@ function device_deassignation(message){
         if (err){
             console.log(err);
         }
+        console.log("********** Device DeAssign **************");
+        console.log(assignDevice);
         let flow = $$.flow.start(domainConfig.type);
         flow.init(domainConfig);
         flow.deassignDevice(assignDevice, async (error, result)=>{

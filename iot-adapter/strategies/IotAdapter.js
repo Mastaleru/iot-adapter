@@ -145,7 +145,10 @@ $$.flow.describe('IotAdaptor', {
         // console.log(devices)
         const patient = patients[0];
         const device = devices[0];
-        // console.log(patient);
+        console.log(" ***** Patient Data ****** ");
+        console.log(patient);
+        console.log(" ****** Device Data ****** ");
+        console.log(device);
         if(!patient){
           console.log("No Patient register!")
           let err = {
@@ -156,8 +159,17 @@ $$.flow.describe('IotAdaptor', {
           callback(err, undefined);
           
         }
+        else if(!device){
+            console.log("No Device register!")
+            let err = {
+              name: "Not Found!",
+              message: "No Device is registered! Please delete this device & create again",
+              status: 404
+            }
+            callback(err, undefined);
+            
+        }
         else {
-
           const newDeviceRequest = {
             status: 'active',
             intent: 'original-order',
