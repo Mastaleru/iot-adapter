@@ -88,39 +88,47 @@ function listFiles(auth) {
       console.log('Files:');
       files.map(async (file) => {
         console.log(`${file.name} (${file.id})`);
-        if(file.name == 'pulseoximeter.csv'){
-          var data = await downloadFile(file.id,file.name, auth);
-          var resourceSpO2 = [];
-          var resourcePulse = [];
-          for(let i=0; i<data.length; i++){
-            resourceSpO2.push(fitbit.createSpO2Resource(file.id,data[i]));
-            resourcePulse.push(fitbit.createPulseResource(file.id,data[i]));
-          }
-          console.log(resourceSpO2);
-          console.log(resourcePulse);
-        }
-        else if(file.name == 'bpm.csv'){
-          var data = await downloadFile(file.id,file.name, auth);
-          var sys = [];
-          var dia = [];
-          var resourcePulse = [];
-          for(let i=0; i<data.length; i++){
-            sys.push(fitbit.createSysResource(file.id,data[i]));
-            dia.push(fitbit.createDiaResource(file.id,data[i]));
-            resourcePulse.push(fitbit.createPulseResource(file.id,data[i]));
-          }
-          console.log(sys);
-          console.log(dia);
-          console.log(resourcePulse);
-        }
+        // if(file.name == 'pulseoximeter.csv'){
+        //   var data = await downloadFile(file.id,file.name, auth);
+        //   var resourceSpO2 = [];
+        //   var resourcePulse = [];
+        //   for(let i=0; i<data.length; i++){
+        //     resourceSpO2.push(fitbit.createSpO2Resource(file.id,data[i]));
+        //     resourcePulse.push(fitbit.createPulseResource(file.id,data[i]));
+        //   }
+        //   console.log(resourceSpO2);
+        //   console.log(resourcePulse);
+        // }
+        // else if(file.name == 'bpm.csv'){
+        //   var data = await downloadFile(file.id,file.name, auth);
+        //   var sys = [];
+        //   var dia = [];
+        //   var resourcePulse = [];
+        //   for(let i=0; i<data.length; i++){
+        //     sys.push(fitbit.createSysResource(file.id,data[i]));
+        //     dia.push(fitbit.createDiaResource(file.id,data[i]));
+        //     resourcePulse.push(fitbit.createPulseResource(file.id,data[i]));
+        //   }
+        //   console.log(sys);
+        //   console.log(dia);
+        //   console.log(resourcePulse);
+        // }
 
-        else if(file.name == 'thermo.csv'){
+        // else if(file.name == 'thermo.csv'){
+        //   var data = await downloadFile(file.id,file.name, auth);
+        //   var bodytemp = [];
+        //   for(let i=0; i<data.length; i++){
+        //     bodytemp.push(fitbit.createBodyTempResource(file.id,data[i]));
+        //   }
+        //   console.log(bodytemp);
+        // }
+        if(file.name == 'activity.csv'){
           var data = await downloadFile(file.id,file.name, auth);
-          var bodytemp = [];
+          var calories = [];
           for(let i=0; i<data.length; i++){
-            bodytemp.push(fitbit.createBodyTempResource(file.id,data[i]));
+            calories.push(fitbit.createCaloriesBurnedResource(file.id,data[i]));
           }
-          console.log(bodytemp);
+          console.log(calories);
         }
 
       });

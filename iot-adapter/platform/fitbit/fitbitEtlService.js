@@ -165,6 +165,39 @@ const buildSpO2Resource = (patientId, data) => {
     };
     return resource;
   }
+  const buildCaloriesBurnedResource = (patientId, data) => {
+    const effectiveDateTime = moment(data.Date_non_US, 'YYYY-MM-DD HH:mm:ss');
+    const identifier = `patient/${patientId}/observation/calburned/${effectiveDateTime.unix()}`;
+    const resource = {
+      sk: identifier,
+      identifier: [
+        {
+          use: 'secondary',
+          value: identifier
+        }
+      ],
+      code: {
+        coding: [
+          {
+            system: "http://loinc.org",
+            code: "41981-2"
+          }
+        ],
+        text: "Calories burned"
+      },
+      subject: {
+        reference: `Patient/${patientId}`
+      },
+      effectiveDateTime: effectiveDateTime.toISOString(),
+      valueQuantity: {
+        value: data.Calories_Burned,
+        unit: "kcal",
+        system: "http://unitsofmeasure.org",
+        code: "kcal"
+      }
+    };
+    return resource;
+  }
 
   module.exports = {
     createSysResource: buildSystolicBloodPressureResource,
@@ -172,4 +205,5 @@ const buildSpO2Resource = (patientId, data) => {
     createSpO2Resource: buildSpO2Resource,
     createPulseResource: buildPulseResource,
     createBodyTempResource: buildBodyTempResource,
+    createCaloriesBurnedResource: buildCaloriesBurnedResource,
   }
