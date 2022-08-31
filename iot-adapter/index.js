@@ -45,8 +45,7 @@ async function setupIoTAdaptorEnvironment() {
         scAPI.refreshSecurityContext();
     }
     MessageHandlerService.init(MessageHandlerStrategy);
-    console.log("environment domain:  ")
-    console.log(initialEnv.didDomain)
+    console.log("environment domain: ", initialEnv.didDomain);
 }
 
 async function IotAdaptor(server) {
@@ -57,7 +56,7 @@ async function IotAdaptor(server) {
     require('./strategies/IotAdapter');
 
     const DynavisionPlatform = require('./platform/dynavision');
-    const FitbitPlatform = require('./platform/fitbit');
+    //const FitbitPlatform = require('./platform/fitbit');
 
     const CreateDsu = require('./dsu/create');
     const CreateDsuResource = require('./dsu/resource/create');
