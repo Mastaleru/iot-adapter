@@ -48,7 +48,9 @@ function new_study(message) {
                 }
                 data.forEach(assignedDevice => {
                     candidatePatientsFound.forEach(patient => {
-                        if (assignedDevice.trialParticipantNumber === patient.patientTPNumber) {
+                        //TODO #435
+                        let patientNumber = assignedDevice.trialParticipantNumber.substring(assignedDevice.trialParticipantNumber.lastIndexOf("-")+1);
+                        if (patientNumber === patient.patientTPNumber) {
                             patient.patientDID = assignedDevice.patientDID
                             patient.deviceId = assignedDevice.deviceId
                         }
@@ -64,7 +66,7 @@ function new_study(message) {
                     DPs = data;
                     DPs.forEach(dp => {
                         candidatePatientsFound.forEach(patient => {
-                            if ((dp.tp.did === patient.patientDID) && (dp.contactMe===true) && (patient.patientDID!=undefined) ) {
+                            if ((dp.tp.did === patient.patientDID) && (dp.contactMe === true) && (patient.patientDID !== undefined)) {
                                 console.log(`Candidate patient that wants to share found: ${JSON.stringify(patient.patientTPNumber)}`);
                                 let communicationService = CommunicationService.getCommunicationServiceInstance();
                                 let data = {

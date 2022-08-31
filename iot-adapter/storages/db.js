@@ -251,11 +251,11 @@ class DbStorage {
 
     //tpNumber has the following format: <TRIAL_ID>-<SITE_ID>-<PATIENT_NUMBER>
     //in order to assure compatibility with existing mock data we use only patient_number
+    //TODO #436
     const patientNumber = tpNumber.substring(tpNumber.lastIndexOf("-")+1);
-    console.log("AICIASIS");
     if(knownMockDataPatientNumbers.includes(patientNumber)){
       this.client
-          .get(`/classes/Observation?where={"sk":{"$text":{"$search":{"$term":${patientNumber}}}}}`)
+          .get(`/classes/Observation?where={"sk":{"$text":{"$search":{"$term":"${patientNumber}"}}}}`)
           .then((response) => {
             callback(undefined, _self.normalizeSingleResponse(response));
           })
