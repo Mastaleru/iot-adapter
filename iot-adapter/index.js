@@ -12,7 +12,6 @@ const commonServicesBundle = "./../common-services/build/bundles/commonServices.
 require(commonServicesBundle);
 const commonServices = require("common-services")
 const {DidService, MessageHandlerService} = commonServices;
-const MessageHandlerStrategy = require("./strategies/MessageHandlerStrategy");
 const didType = "ssi:name";
 const DOMAIN = process.env.DID_DOMAIN;
 const publicName = process.env.IOT_ADAPTOR_DID;
@@ -41,9 +40,12 @@ async function setupIoTAdaptorEnvironment() {
     if (!initialEnv.did) {
         initialEnv.did = `did:${didType}:${DOMAIN}:${publicName}`;
         initialEnv.didDomain = DOMAIN;
+        initialEnv.vault = "server";
+        initialEnv.enclaveType = "WalletDBEnclave";
         await $$.promisify(mainDSU.writeFile)("environment.json", JSON.stringify(initialEnv));
         scAPI.refreshSecurityContext();
     }
+    const MessageHandlerStrategy = require("./strategies/MessageHandlerStrategy");
     MessageHandlerService.init(MessageHandlerStrategy);
     console.log("environment domain: ", initialEnv.didDomain);
 }
