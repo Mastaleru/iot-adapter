@@ -58,7 +58,7 @@ async function IotAdaptor(server) {
     require('./strategies/IotAdapter');
 
     const DynavisionPlatform = require('./platform/dynavision');
-    //const FitbitPlatform = require('./platform/fitbit');
+    const FitbitPlatform = require('./platform/fitbit');
 
     const CreateDsu = require('./dsu/create');
     const CreateDsuResource = require('./dsu/resource/create');
@@ -141,6 +141,7 @@ async function IotAdaptor(server) {
     // Actual APIs
     // server.post(`/iotAdapter/platform/dynavision`, requestBodyXMLMiddleware);
     server.post(`/iotAdapter/platform/dynavision`, DynavisionPlatform);
+    server.get(`/iotAdapter/platform/fitbit`, FitbitPlatform);
     // server.post(`/iotAdapter/assign-device`, requestBodyJSONMiddleware); 
     server.post(`/iotAdapter/assign-device`, AssignDevice);
 
