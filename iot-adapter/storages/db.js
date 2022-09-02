@@ -2,7 +2,18 @@ const _ = require('lodash');
 const axios = require('axios');
 var qs = require('querystring');
 
-const knownMockDataPatientNumbers = ["10001","10002","10003","10004","10005","10006","10007","10008","10009","10010"]
+// TODO #436 - @Rafael, please validate
+const knownMockDataTrialNumbers = ["MT1", "MT2", "MT3", "MT4", "MT5"];
+const knownMockDataClinicalSiteNumbers = ["CS1", "CS2", "CS3", "CS4", "CS5"];
+const knownMockDataPatientNumbers = ["10001", "10002", "10003", "10004", "10005", "10006", "10007", "10008", "10009", "10010"];
+
+// TODO #436 - @Rafael, please validate
+function isMockDataPatient(tpNumber) {
+  const tpNumberSegments = tpNumber.split("-");
+  return knownMockDataTrialNumbers.includes(tpNumberSegments[0])
+      && knownMockDataClinicalSiteNumbers.includes(tpNumberSegments[1])
+      && knownMockDataPatientNumbers.includes(tpNumberSegments[2]);
+}
 
 class DbStorage {
   constructor(config) {
@@ -249,13 +260,10 @@ class DbStorage {
     //     callback(_self.normalizeErrorResponse(error), null);
     //   });
 
-    //tpNumber has the following format: <TRIAL_ID>-<SITE_ID>-<PATIENT_NUMBER>
-    //in order to assure compatibility with existing mock data we use only patient_number
-    //TODO #436
-    const patientNumber = tpNumber.substring(tpNumber.lastIndexOf("-")+1);
-    if(knownMockDataPatientNumbers.includes(patientNumber)){
+    // TODO #436 - @Rafael, please validate
+    if (isMockDataPatient(tpNumber)) {
       this.client
-          .get(`/classes/Observation?where={"sk":{"$text":{"$search":{"$term":"${patientNumber}"}}}}`)
+          .get(`/classes/Observation?where={"sk":{"$text":{"$search":{"$term":"${tpNumber}"}}}}`)
           .then((response) => {
             callback(undefined, _self.normalizeSingleResponse(response));
           })
