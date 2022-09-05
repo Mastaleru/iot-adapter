@@ -262,8 +262,9 @@ class DbStorage {
 
     // TODO #436 - @Rafael, please validate
     if (isMockDataPatient(tpNumber)) {
+      const patientNumber = tpNumber.substring(tpNumber.lastIndexOf("-")+1);
       this.client
-          .get(`/classes/Observation?where={"sk":{"$text":{"$search":{"$term":"${tpNumber}"}}}}`)
+          .get(`/classes/Observation?where={"sk":{"$text":{"$search":{"$term":"${patientNumber}"}}}}`)
           .then((response) => {
             callback(undefined, _self.normalizeSingleResponse(response));
           })
