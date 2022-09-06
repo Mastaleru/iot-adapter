@@ -82,7 +82,6 @@ class DbStorage {
     this.client
       .post(`/classes/${type}`, resource)
       .then((response) => {
-        // console.log(response);
         let _resource = _self.normalizeSingleResponse(response);
         _self.getResourceById(type, _resource.id, callback);         
       })

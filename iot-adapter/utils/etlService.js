@@ -13,10 +13,11 @@ const escapeXml = (unsafe) => {
   });
 }
 
-const buildPatientResource = (xmlDocument) => {
+const buildPatientResource = (xmlDocument, ID) => {
   const patientInfo = xmlDocument.dantest.patient_info[0];
   const resource = {
     sk: patientInfo.patientcode[0],
+    // sk: ID,
     name: [{ use: 'official', family: patientInfo.lname[0], given: [patientInfo.fname[0]] }],
     identifier: [
       {
@@ -30,6 +31,7 @@ const buildPatientResource = (xmlDocument) => {
           ]
         },
         value: patientInfo.patientcode[0]
+        // value: ID
       },
       {
         use: 'official',
@@ -76,8 +78,9 @@ const buildHeightResource = (patientId, xmlDocument) => {
   const measurementInfo = xmlDocument.dantest.measurement_info[0];
   const effectiveDateTime = moment(measurementInfo.date[0], 'YYYY-MM-DD HH:mm:ss');
   const identifier = `patient/${patientId}/observation/height/${effectiveDateTime.unix()}`;
+  var height = Math.random() * 155.0 + 185.0;
   const resource = {
-    sk: identifier,
+    sk: patientId,
     identifier: [
       {
         use: 'secondary',
@@ -96,7 +99,8 @@ const buildHeightResource = (patientId, xmlDocument) => {
     },
     effectiveDateTime: effectiveDateTime.toISOString(),
     valueQuantity: {
-      value: patientInfo.height[0],
+      // value: patientInfo.height[0],
+      value: height.toFixed(2),
       unit: "cm",
       system: "http://unitsofmeasure.org",
       code: "cm"
@@ -110,8 +114,9 @@ const buildWeightResource = (patientId, xmlDocument) => {
   const measurementInfo = xmlDocument.dantest.measurement_info[0];
   const effectiveDateTime = moment(measurementInfo.date[0], 'YYYY-MM-DD HH:mm:ss');
   const identifier = `patient/${patientId}/observation/weight/${effectiveDateTime.unix()}`;
+  // var weight = Math.random() * 40.0 + 50.0;
   const resource = {
-    sk: identifier,
+    sk: patientId,
     identifier: [
       {
         use: 'secondary',
@@ -131,6 +136,7 @@ const buildWeightResource = (patientId, xmlDocument) => {
     effectiveDateTime: effectiveDateTime.toISOString(),
     valueQuantity: {
       value: patientInfo.weight[0],
+      // value: weight.toFixed(2),
       unit: "kg",
       system: "http://unitsofmeasure.org",
       code: "kg"
@@ -144,8 +150,9 @@ const buildAgeResource = (patientId, xmlDocument) => {
   const measurementInfo = xmlDocument.dantest.measurement_info[0];
   const effectiveDateTime = moment(measurementInfo.date[0], 'YYYY-MM-DD HH:mm:ss');
   const identifier = `patient/${patientId}/observation/age/${effectiveDateTime.unix()}`;
+  // var age = Math.floor(Math.random() * 65 + 25);
   const resource = {
-    sk: identifier,
+    sk: patientId,
     identifier: [
       {
         use: 'secondary',
@@ -165,6 +172,7 @@ const buildAgeResource = (patientId, xmlDocument) => {
     effectiveDateTime: effectiveDateTime.toISOString(),
     valueQuantity: {
       value: patientInfo.age[0],
+      // value: age,
       unit: "a",
       system: "http://unitsofmeasure.org",
       code: "a"
@@ -178,11 +186,11 @@ const buildSystolicBloodPressureResource = (patientId, xmlDocument) => {
   const effectiveDateTime = moment(measurementInfo.date[0], 'YYYY-MM-DD HH:mm:ss');
   const results = xmlDocument.dantest.results[0];
   const pwv = results.pwv[0];
-
+  // var sys = Math.random() * 15.0 + 115.0;
   const bpSys = _.find(pwv.item, function (object) { return object.$.code === 'PTG-BPSYS'; });
   const identifier = `patient/${patientId}/observation/bpsys/${effectiveDateTime.unix()}`;
   const resource = {
-    sk: identifier,
+    sk: patientId,
     identifier: [
       {
         use: 'secondary',
@@ -203,6 +211,7 @@ const buildSystolicBloodPressureResource = (patientId, xmlDocument) => {
     effectiveDateTime: effectiveDateTime.toISOString(),
     valueQuantity: {
       value: bpSys._,
+      // value: sys.toFixed(2),
       unit: "mmHg",
       system: "http://unitsofmeasure.org",
       code: "mmHg"
@@ -216,11 +225,11 @@ const buildDiasystolicBloodPressureResource = (patientId, xmlDocument) => {
   const effectiveDateTime = moment(measurementInfo.date[0], 'YYYY-MM-DD HH:mm:ss');
   const results = xmlDocument.dantest.results[0];
   const pwv = results.pwv[0];
-
+  // var dia = Math.random() * 20.0 + 60.0;
   const bpDia = _.find(pwv.item, function (object) { return object.$.code === 'PTG-BPDIA'; });
   const identifier = `patient/${patientId}/observation/bpdia/${effectiveDateTime.unix()}`;
   const resource = {
-    sk: identifier,
+    sk: patientId,
     identifier: [
       {
         use: 'secondary',
@@ -242,6 +251,7 @@ const buildDiasystolicBloodPressureResource = (patientId, xmlDocument) => {
     effectiveDateTime: effectiveDateTime.toISOString(),
     valueQuantity: {
       value: bpDia._,
+      // value: dia.toFixed(2),
       unit: "mmHg",
       system: "http://unitsofmeasure.org",
       code: "mmHg"
@@ -258,8 +268,9 @@ const buildSpO2Resource = (patientId, xmlDocument) => {
 
   const spO2 = _.find(pwv.item, function (object) { return object.$.code === 'PTG-SpO2'; });
   const identifier = `patient/${patientId}/observation/spo2/${effectiveDateTime.unix()}`;
+  // var spo2 = Math.random() * 5.0 + 95.0;
   const resource = {
-    sk: identifier,
+    sk: patientId,
     identifier: [
       {
         use: 'secondary',
@@ -279,6 +290,8 @@ const buildSpO2Resource = (patientId, xmlDocument) => {
     effectiveDateTime: effectiveDateTime.toISOString(),
     valueQuantity: {
       value: spO2._,
+      // for demo purpose
+      // value: spo2.toFixed(2),
       unit: "%",
       system: "http://unitsofmeasure.org",
       code: "%"
@@ -309,12 +322,20 @@ const processXml = (mainDb, xmlString, callback) => {
     if (error) {
       callback(error, null);
     } else {
+      // for debug purpose Start 
+      // var ID = "";
+      // for(let i=1; i<=5; i++){
+      //   for(let j=1; j<=5; j++){
+      //     for(let k=10001; k<=10010; k++){
+      //     ID="MT"+i+"-CS"+j+"-"+k;
+          // for debug purpose End 
       const patient_info = result.dantest.patient_info[0];
       const measurement_info = result.dantest.measurement_info[0];
       const results = result.dantest.results[0];
+
       const pwv = results.pwv[0];
       const effectiveDateTime = moment(measurement_info.date[0], 'YYYY-MM-DD HH:mm:ss');
-      const newPatient = buildPatientResource(result);
+      const newPatient = buildPatientResource(result, ID);
       const newDevice = buildDeviceResource(result);
 
       const patientIdentifier = newPatient.identifier[0].value;
@@ -325,48 +346,51 @@ const processXml = (mainDb, xmlString, callback) => {
         const device = await mainDb.findOrCreateResourceAsync('Device', newDevice, { where: { "identifier.value": deviceSN } });
         const patient = await mainDb.findOrCreateResourceAsync('Patient', newPatient, { where: { "identifier.value": patientIdentifier } });
 
+        // console.log(patient)
+        // console.log(device)
         //Start Height
-        const bodyHeight = buildHeightResource(patient.id, result);
+        const bodyHeight = buildHeightResource(patient.sk, result);
         const heightIdentifier = bodyHeight.identifier[0].value;
         const bodyHeightObservation = await mainDb.findOrCreateResourceAsync('Observation', bodyHeight, { where: { "identifier.value": heightIdentifier } });
         observations.push(bodyHeightObservation);
         //End Height
 
         //Start Weight
-        const bodyWeight = buildWeightResource(patient.id, result);
+        const bodyWeight = buildWeightResource(patient.sk, result);
         const weightIdentifier = bodyWeight.identifier[0].value;
         const bodyWeightObservation = await mainDb.findOrCreateResourceAsync('Observation', bodyWeight, { where: { "identifier.value": weightIdentifier } });
         observations.push(bodyWeightObservation);
         //End Weight
 
         //Start Age
-        const age = buildAgeResource(patient.id, result);
+        const age = buildAgeResource(patient.sk, result);
         const ageIdentifier = age.identifier[0].value;
         const ageObservation = await mainDb.findOrCreateResourceAsync('Observation', age, { where: { "identifier.value": ageIdentifier } });
         observations.push(ageObservation);
         //End Age
 
-        //Start Systolic Blood Pressure
-        const bpSys = buildSystolicBloodPressureResource(patient.id, result);
+        //Start Systolic Blood Pressure  
+        const bpSys = buildSystolicBloodPressureResource(patient.sk, result);
         const bpSysIdentifier = bpSys.identifier[0].value;
         const bpSysObservation = await mainDb.findOrCreateResourceAsync('Observation', bpSys, { where: { "identifier.value": bpSysIdentifier } });
         observations.push(bpSysObservation);
         //End Blood Pressure
 
         //Start Diasystolic Blood Pressure
-        const bpDia = buildDiasystolicBloodPressureResource(patient.id, result);
+        const bpDia = buildDiasystolicBloodPressureResource(patient.sk, result);
         const bpDiaIdentifier = bpDia.identifier[0].value;
         const bpDiaObservation = await mainDb.findOrCreateResourceAsync('Observation', bpDia, { where: { "identifier.value": bpDiaIdentifier } });
         observations.push(bpDiaObservation);
         //End Diasystolic Blood Pressure
 
         //Start SpO2
-        const spO2 = buildSpO2Resource(patient.id, result);
+        const spO2 = buildSpO2Resource(patient.sk, result);
         const spO2Identifier = spO2.identifier[0].value;
         const spO2Observation = await mainDb.findOrCreateResourceAsync('Observation', spO2, { where: { "identifier.value": spO2Identifier } });
         observations.push(spO2Observation);
         //End SpO2
 
+        console.log(observations);
 
         const deviceRequest = await mainDb.findResourceAsync('DeviceRequest', { where: { "status": "active", "codeReference.reference": `Device/${device.id}`, "subject.reference": `Patient/${patient.id}` } });
         if(deviceRequest) {
@@ -377,6 +401,11 @@ const processXml = (mainDb, xmlString, callback) => {
       } catch (error) {
         // console.log(error);
       }
+      // for debug purpose Start 
+//     }
+//   }
+// }
+// for debug purpose End 
 
       callback(undefined, { success: true });
     }
