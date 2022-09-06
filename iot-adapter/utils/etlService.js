@@ -335,7 +335,7 @@ const processXml = (mainDb, xmlString, callback) => {
 
       const pwv = results.pwv[0];
       const effectiveDateTime = moment(measurement_info.date[0], 'YYYY-MM-DD HH:mm:ss');
-      const newPatient = buildPatientResource(result, ID);
+      const newPatient = buildPatientResource(result);
       const newDevice = buildDeviceResource(result);
 
       const patientIdentifier = newPatient.identifier[0].value;
