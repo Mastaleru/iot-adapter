@@ -139,9 +139,7 @@ $$.flow.describe('IotAdaptor', {
       const trialParticipantNumber = jsonData.trialParticipantNumber;
       const deviceId = jsonData.deviceId;
       try {
-        // TODO #436 - @Rafael, please validate
-        const patientNumber = trialParticipantNumber.substring(trialParticipantNumber.lastIndexOf("-")+1);
-        const patients = await this.mainDb.searchResourcesAsync('Patient', { where: { "sk": patientNumber } });
+        const patients = await this.mainDb.searchResourcesAsync('Patient', { where: { "sk": trialParticipantNumber } });
         const devices = await this.mainDb.searchResourcesAsync('Device', { where: { "identifier.value": deviceId } });
         // console.log("************* Patient ***********")
         // console.log(devices)

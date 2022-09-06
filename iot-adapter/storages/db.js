@@ -1,13 +1,11 @@
 const _ = require('lodash');
 const axios = require('axios');
-var qs = require('querystring');
+const qs = require('querystring');
 
-// TODO #436 - @Rafael, please validate
 const knownMockDataTrialNumbers = ["MT1", "MT2", "MT3", "MT4", "MT5"];
 const knownMockDataClinicalSiteNumbers = ["CS1", "CS2", "CS3", "CS4", "CS5"];
 const knownMockDataPatientNumbers = ["10001", "10002", "10003", "10004", "10005", "10006", "10007", "10008", "10009", "10010"];
 
-// TODO #436 - @Rafael, please validate
 function isMockDataPatient(tpNumber) {
   const tpNumberSegments = tpNumber.split("-");
   return knownMockDataTrialNumbers.includes(tpNumberSegments[0])
@@ -236,7 +234,7 @@ class DbStorage {
     const _self = this;
     
     this.client
-      .get(`/classes/${type}?where={"sk":{"$text":{"$search":{"$term":${id}}}}}`)
+      .get(`/classes/${type}?where={"sk":"${id}"}`)
       .then((response) => {
         callback(undefined, _self.normalizeSingleResponse(response));
       })
@@ -260,11 +258,9 @@ class DbStorage {
     //     callback(_self.normalizeErrorResponse(error), null);
     //   });
 
-    // TODO #436 - @Rafael, please validate
     if (isMockDataPatient(tpNumber)) {
-      const patientNumber = tpNumber.substring(tpNumber.lastIndexOf("-")+1);
       this.client
-          .get(`/classes/Observation?where={"sk":{"$text":{"$search":{"$term":"${patientNumber}"}}}}`)
+          .get(`/classes/Observation?where={"sk":"${tpNumber}"}`)
           .then((response) => {
             callback(undefined, _self.normalizeSingleResponse(response));
           })
@@ -280,7 +276,7 @@ class DbStorage {
     console.log("************* Get Observations by Patient ID *************")
     console.log(linkData);
     this.client
-      .get(`/classes/Observation?where={"sk":{"$text":{"$search":{"$term":${linkData}}}}}`)
+      .get(`/classes/Observation?where={"sk":"${linkData}"}`)
       .then((response) => {
         callback(undefined, _self.normalizeSingleResponse(response));
       })

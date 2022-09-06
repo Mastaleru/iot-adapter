@@ -48,9 +48,7 @@ function new_study(message) {
                 }
                 data.forEach(assignedDevice => {
                     candidatePatientsFound.forEach(patient => {
-                        // TODO #436 - @Rafael, please validate
-                        let patientNumber = assignedDevice.trialParticipantNumber.substring(assignedDevice.trialParticipantNumber.lastIndexOf("-")+1);
-                        if (patientNumber === patient.patientTPNumber) {
+                        if (assignedDevice.trialParticipantNumber === patient.patientTPNumber) {
                             patient.patientDID = assignedDevice.patientDID
                             patient.deviceId = assignedDevice.deviceId
                         }
