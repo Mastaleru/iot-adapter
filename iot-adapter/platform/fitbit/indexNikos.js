@@ -140,5 +140,5 @@ async function downloadFile(realFileId, name, auth) {
   }
 }
 
-processFitbit();
+//processFitbit();
 module.exports = processFitbit;
