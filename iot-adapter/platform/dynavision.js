@@ -16,7 +16,7 @@ function processXml(request, response, next) {
             }
             return response.send(500);
         }
-        response.send(200, result);
+        response.status(200).send(result);
     });
 }
 module.exports = processXml;
