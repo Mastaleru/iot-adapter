@@ -7,13 +7,14 @@ const healthDataService= new HealthDataService();
 const deviceAssignationService = new DeviceAssignationService();
 const dpService = DPService.getDPService();
 
-var DPs, candidatePatientsFound;
+var DPs, candidatePatientsFound, candidatesToCommunicate;
 
 
 function new_study(message) {
 
     candidatePatientsFound = [];
     DPs = [];
+    candidatesToCommunicate= [];
 
     studiesService.mount(message.ssi, (err, mountedStudy) => {
         if (err) {
@@ -57,13 +58,22 @@ function new_study(message) {
 
                 console.log(`Candidate patients found: ${JSON.stringify(candidatePatientsFound)}`);
 
+                keys = ['patientDID'];
+                candidatesToCommunicate = candidatePatientsFound.filter(
+                    (s => o => 
+                        (k => !s.has(k) && s.add(k))
+                        (keys.map(k => o[k]).join('|'))
+                    )
+                    (new Set)
+                );
+
                 dpService.getDPs((err, data) => {
                     if (err){
                         console.log(err);
                     }
                     DPs = data;
                     DPs.forEach(dp => {
-                        candidatePatientsFound.forEach(patient => {
+                        candidatesToCommunicate.forEach(patient => {
                             if ((dp.tp && dp.tp.did === patient.patientDID) && (dp.contactMe === true) && (patient.patientDID !== undefined)) {
                                 console.log(`Candidate patient that wants to share found: ${JSON.stringify(patient.patientTPNumber)}`);
                                 let communicationService = CommunicationService.getCommunicationServiceInstance();
