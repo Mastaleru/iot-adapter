@@ -1,3 +1,4 @@
+.env
 .prettierrc
 .prettierignore
 .idea
@@ -12,3 +13,4 @@ seed
 common-services
 mqs
 env.json
+iot-adapter/token.json

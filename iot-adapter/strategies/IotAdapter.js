@@ -13,10 +13,6 @@ $$.flow.describe('IotAdaptor', {
         this.commandData.apiEndpoint = endpointURL.hostname;
         this.commandData.apiPort = endpointURL.port;
         this.commandData.protocol = endpointURL.protocol.replace(':', "");
-        // this.fhir = new FhirStorage({
-        //   baseUrl: 'http://localhost:8090/fhir'
-        // });
-
         this.mainDb = new DbStorage({
           baseURL: process.env.STORAGE_API_BASE_URL,
           headers: {

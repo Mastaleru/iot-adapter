@@ -6,7 +6,7 @@ const buildSpO2Resource = (patientId, data) => {
     const effectiveDateTime = moment(data.Date_non_US, 'YYYY-MM-DD HH:mm:ss');
     const identifier = `patient/${patientId}/observation/spo2/${effectiveDateTime.unix()}`;
     const resource = {
-      sk: identifier,
+      sk: patientId,
       identifier: [
         {
           use: 'secondary',
@@ -38,7 +38,7 @@ const buildSpO2Resource = (patientId, data) => {
     const effectiveDateTime = moment(data.Date_non_US, 'YYYY-MM-DD HH:mm:ss');
     const identifier = `patient/${patientId}/observation/bodytemp/${effectiveDateTime.unix()}`;
     const resource = {
-      sk: identifier,
+      sk: patientId,
       identifier: [
         {
           use: 'secondary',
@@ -70,7 +70,7 @@ const buildSpO2Resource = (patientId, data) => {
     const effectiveDateTime = moment(data.Date_non_US, 'YYYY-MM-DD HH:mm:ss');
     const identifier = `patient/${patientId}/observation/pulse/${effectiveDateTime.unix()}`;
     const resource = {
-      sk: identifier,
+      sk: patientId,
       identifier: [
         {
           use: 'secondary',
@@ -103,7 +103,7 @@ const buildSpO2Resource = (patientId, data) => {
     const effectiveDateTime = moment(data.Date_non_US, 'YYYY-MM-DD HH:mm:ss');
     const identifier = `patient/${patientId}/observation/bpsys/${effectiveDateTime.unix()}`;
     const resource = {
-      sk: identifier,
+      sk: patientId,
       identifier: [
         {
           use: 'secondary',
@@ -136,7 +136,7 @@ const buildSpO2Resource = (patientId, data) => {
     const effectiveDateTime = moment(data.Date_non_US, 'YYYY-MM-DD HH:mm:ss');
     const identifier = `patient/${patientId}/observation/bpdia/${effectiveDateTime.unix()}`;
     const resource = {
-      sk: identifier,
+      sk: patientId,
       identifier: [
         {
           use: 'secondary',
@@ -169,7 +169,7 @@ const buildSpO2Resource = (patientId, data) => {
     const effectiveDateTime = moment(data.Date_non_US, 'YYYY-MM-DD HH:mm:ss');
     const identifier = `patient/${patientId}/observation/calburned/${effectiveDateTime.unix()}`;
     const resource = {
-      sk: identifier,
+      sk: patientId,
       identifier: [
         {
           use: 'secondary',
@@ -198,6 +198,70 @@ const buildSpO2Resource = (patientId, data) => {
     };
     return resource;
   }
+  const buildPatientResource = (patientID) => {
+    const resource = {
+      sk: patientId,
+      name: [{ use: 'official', family: "XXXXXXX", given: "XXXXXXX" }],
+      identifier: [
+        {
+          use: 'official',
+          type: {
+            coding: [
+              {
+                system: "http://terminology.hl7.org/CodeSystem/v2-0203",
+                code: "MR"
+              }
+            ]
+          },
+          value: patientId
+        },
+        {
+          use: 'official',
+          type: {
+            coding: [
+              {
+                system: "http://terminology.hl7.org/CodeSystem/v2-0203",
+                code: "RI"
+              }
+            ]
+          },
+          value: patientId
+        },
+      ]
+    };
+    return resource;
+  }
+
+const buildDeviceResource = (deviceInfo) => {
+  const resource = {
+    sk: deviceInfo.deviceId,
+    identifier: [
+      {
+        use: 'official',
+        type: {
+          coding: [
+            {
+              system: "http://terminology.hl7.org/CodeSystem/v2-0203",
+              code: "SNO"
+            }
+          ]
+        },
+        value: deviceInfo.deviceId
+      }
+    ],
+    serialNumber: deviceInfo.serialNumber,
+    status: "Active",
+    modelNumber: deviceInfo.modelNumber,
+    manufacturer: "Fitbit",
+    deviceName: [
+      {
+        "name": deviceInfo.name,
+        "type": "manufacturer-name"
+      }
+    ]
+  };
+  return resource;
+}
 
   module.exports = {
     createSysResource: buildSystolicBloodPressureResource,
@@ -206,4 +270,7 @@ const buildSpO2Resource = (patientId, data) => {
     createPulseResource: buildPulseResource,
     createBodyTempResource: buildBodyTempResource,
     createCaloriesBurnedResource: buildCaloriesBurnedResource,
+    createPatientResource: buildPatientResource,
+    createDeviceResource: buildDeviceResource
   }
+

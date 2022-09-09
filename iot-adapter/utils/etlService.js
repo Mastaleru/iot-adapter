@@ -390,8 +390,6 @@ const processXml = (mainDb, xmlString, callback) => {
         observations.push(spO2Observation);
         //End SpO2
 
-        console.log(observations);
-
         const deviceRequest = await mainDb.findResourceAsync('DeviceRequest', { where: { "status": "active", "codeReference.reference": `Device/${device.id}`, "subject.reference": `Patient/${patient.id}` } });
         if(deviceRequest) {
           const healthDataDsu = await mainDb.findResourceAsync('HealthDataDsu', { where: { "codeReference.reference": `DeviceRequest/${deviceRequest.id}` } });
