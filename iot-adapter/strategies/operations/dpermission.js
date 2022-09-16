@@ -4,6 +4,8 @@ const dpService = DPService.getDPService();
 const studiesService = new StudiesService();
 const healthDataService= new HealthDataService();
 const permissionedHealthDataService = new PermissionedHealthDataService();
+const Constants = commonServices.Constants;
+
 
 function create_dp(message) {
     dpService.mount(message.sReadSSI, (err, mountedDPermission) => {
@@ -58,7 +60,7 @@ function dp_updated_add(message) {
                         console.log(err);
                     }
                     let PermissionState = {
-                        operation: "add_participants_to_study",
+                        operation: Constants.MESSAGES.RESEARCHER.ADD_PARTICIPANTS_TO_STUDY,
                         participant: match.patient,
                         studyUID: match.studyUID,
                         dpermissionStartSharingDate: match.dpermissionStartSharingDate,
@@ -92,7 +94,7 @@ function dp_updated_remove(message) {
             let researcherDID = studyFullData.researcherDID;
             let communicationService = CommunicationService.getCommunicationServiceInstance();
             let data = {
-                operation: "remove_participants_from_study",
+                operation: Constants.MESSAGES.RESEARCHER.REMOVE_PARTICIPANTS_FROM_STUDY,
                 participant: match.patient,
                 studyUID: match.studyUID,
                 dpermissionStopSharingDate: match.dpermissionStopSharingDate,
@@ -120,7 +122,7 @@ function dp_updated_reject(message) {
             let researcherDID = studyFullData.researcherDID;
             let communicationService = CommunicationService.getCommunicationServiceInstance();
             let data = {
-                operation: "reject_participants_from_study",
+                operation: Constants.MESSAGES.RESEARCHER.REJECT_PARTICIPANTS_FROM_STUDY,
                 participant: match.patient,
                 studyUID: match.studyUID,
                 dpermissionRejectedDate: match.dpermissionRejectedDate,

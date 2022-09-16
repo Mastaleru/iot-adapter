@@ -1,7 +1,7 @@
 const commonServices = require("common-services")
 const { StudiesService, HealthDataService, DeviceAssignationService, DPService, CommunicationService } = commonServices;
 const { domainConfig } = require("../../utils/index");
-
+const Constants = commonServices.Constants;
 const studiesService = new StudiesService();
 const healthDataService= new HealthDataService();
 const deviceAssignationService = new DeviceAssignationService();
@@ -78,7 +78,7 @@ function new_study(message) {
                                 console.log(`Candidate patient that wants to share found: ${JSON.stringify(patient.patientTPNumber)}`);
                                 let communicationService = CommunicationService.getCommunicationServiceInstance();
                                 let data = {
-                                    operation: "datamatchmaking",
+                                    operation: Constants.MESSAGES.RESEARCHER.DATA_MATCH_MAKING,
                                     patientInformation: patient,
                                     studysReadSSI: message.ssi
                                 }
