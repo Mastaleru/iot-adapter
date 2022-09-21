@@ -11,16 +11,18 @@ const SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly'];
 // created automatically when the authorization flow completes for the first
 // time.
 const TOKEN_PATH = 'token.json';
-const Credential_Path = 'credentials.json';
 
 // Load client secrets from a local file.
-function processFitbit(){
+// function processFitbit(){
   fs.readFile(require('path').resolve(__dirname, 'credentials.json'), (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
+
     // Authorize a client with credentials, then call the Google Drive API.
+    // authorize(JSON.parse(content), listOfFolders);
     authorize(JSON.parse(content), listFiles);
   });  
-}
+// }
+
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -72,28 +74,132 @@ function getAccessToken(oAuth2Client, callback) {
   });
 }
 
+ /**
+ * Lists the names and IDs of up to 10 folders.
+ * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
+ */
+const listOfFolders = async (auth) => {
+  let CSV_FOLDER = "1PSgC9RWj0A7osNqMIUdyLTSx825IAGNX"
+  const drive = google.drive({version: 'v3', auth});
+
+  const res = await drive.files.list({
+
+    pageSize: 10,
+
+    fields: 'nextPageToken, files(id, name)',
+
+    q: `'${CSV_FOLDER}' in parents and trashed=false`
+
+  });
+    for(let val of res.data.files){
+      drive.files.list({
+        pageSize: 10,
+        fields: 'nextPageToken, files(id, name)',
+        q: `'${val.id}' in parents and mimeType=\'text/csv\'`
+      }, (err, res) => {
+        if (err) return console.log('The API returned an error: ' + err);
+        console.log(res.data.files);
+      });
+    }
+};
+
 /**
  * Lists the names and IDs of up to 10 files.
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-
-function listFiles(auth) {
+async function listFiles(auth, tpNumber) {
+  
   var allActivity = [];
-  ID_OF_THE_FOLDER = "1PSgC9RWj0A7osNqMIUdyLTSx825IAGNX"
-  const drive = google.drive({version: 'v2', auth});
-  drive.files.list({
-    //q: `'${ID_OF_THE_FOLDER}' in parents and trashed=false`
-    q: `'${ID_OF_THE_FOLDER}' in parents`
-}, (err, res) => {
-    if (err) return console.log('The API returned an error: ' + err);
-    console.log(res.data);
-  });
-}
 
+ /**
+ * Lists the names and IDs of up to 10 folders.
+ * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
+ */
+  const drive = google.drive({version: 'v3', auth});
+  let CSV_FOLDER = "1PSgC9RWj0A7osNqMIUdyLTSx825IAGNX"
+  const res = await drive.files.list({
+
+    pageSize: 10,
+
+    fields: 'nextPageToken, files(id, name)',
+
+    q: `'${CSV_FOLDER}' in parents and trashed=false`
+
+  });
+
+  // End of List of Folder collection
+
+  for(let val of res.data.files){
+    drive.files.list({
+      pageSize: 10,
+      fields: 'nextPageToken, files(id, name)',
+      q: `'${val.id}' in parents and mimeType=\'text/csv\'`
+    }, (err, res) => {
+      if (err) return console.log('The API returned an error: ' + err);
+      const files = res.data.files;
+      console.log(res.data);
+      
+      if (files.length) {
+        files.map(async (file) => {
+          console.log(`${file.name} (${file.id})`);
+          if(file.name == 'pulseoximeter.csv'){
+            let name = val.name+'_'+file.name;
+            var data = await downloadFile(file.id, name, auth);
+            var resourceSpO2 = [];
+            var resourcePulse = [];
+            for(let i=0; i<data.length; i++){
+              resourceSpO2.push(fitbit.createSpO2Resource(val.name,data[i]));
+              resourcePulse.push(fitbit.createPulseResource(val.name,data[i]));
+            }
+            // console.log(resourceSpO2);
+            // console.log(resourcePulse);
+          }
+          else if(file.name == 'bpm.csv'){
+            let name = val.name+'_'+file.name;
+            var data = await downloadFile(file.id, name, auth);
+            var sys = [];
+            var dia = [];
+            var resourcePulse = [];
+            for(let i=0; i<data.length; i++){
+              sys.push(fitbit.createSysResource(val.name,data[i]));
+              dia.push(fitbit.createDiaResource(val.name,data[i]));
+              resourcePulse.push(fitbit.createPulseResource(val.name,data[i]));
+            }
+            // console.log(sys);
+            // console.log(dia);
+            // console.log(resourcePulse);
+          }
+
+          else if(file.name == 'thermo.csv'){
+            let name = val.name+'_'+file.name;
+            var data = await downloadFile(file.id, name, auth);
+            var bodytemp = [];
+            for(let i=0; i<data.length; i++){
+              bodytemp.push(fitbit.createBodyTempResource(val.name,data[i]));
+            }
+            // console.log(bodytemp);
+          }
+          else if(file.name == 'activity.csv'){
+            let name = val.name+'_'+file.name;
+            var data = await downloadFile(file.id, name, auth);
+            var calories = [];
+            for(let i=0; i<data.length; i++){
+              calories.push(fitbit.createCaloriesBurnedResource(val.name,data[i]));
+            }
+            console.log(calories);
+          }
+
+        });
+      } else {
+        console.log('No files found in fitbit.');
+      }
+    });
+  }
+}
 
 async function downloadFile(realFileId, name, auth) {
 
-  const drive = google.drive({version: 'v2', auth});
+  const drive = google.drive({version: 'v3', auth});
 
   fileId = realFileId;
   try {
@@ -140,5 +246,4 @@ async function downloadFile(realFileId, name, auth) {
   }
 }
 
-//processFitbit();
-module.exports = processFitbit;
+// module.exports = processFitbit;
