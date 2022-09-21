@@ -10,7 +10,7 @@ const dpService = DPService.getDPService();
 var DPs, candidatePatientsFound, candidatesToCommunicate;
 
 
-function new_study(message) {
+function communicate_study_data_matchmaking(message) {
 
     candidatePatientsFound = [];
     DPs = [];
@@ -94,5 +94,5 @@ function new_study(message) {
 }
 
 module.exports = {
-    "new_study": new_study,
+    "communicate_study_data_matchmaking": communicate_study_data_matchmaking,
 }
