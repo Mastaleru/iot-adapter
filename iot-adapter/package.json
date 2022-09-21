@@ -12,17 +12,19 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "octopus": "git+https://github.com/PrivateSky/octopus.git",
+    "@google-cloud/local-auth": "^2.1.1",
+    "@googleapis/docs": "^1.0.1",
     "axios": "^0.21.1",
     "encoding": "^0.1.13",
     "express": "^4.17.2",
     "fhir-kit-client": "^1.6.3",
+    "googleapis": "^39.2.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
+    "octopus": "git+https://github.com/PrivateSky/octopus.git",
+    "querystring": "^0.2.1",
     "supports-color": "^8.1.1",
     "uuid": "^8.3.2",
-    "xml2js": "^0.4.23",
-    "querystring": "^0.2.1",
-    "googleapis": "^39.2.0"
+    "xml2js": "^0.4.23"
   }
 }
