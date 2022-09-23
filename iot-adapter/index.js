@@ -58,7 +58,7 @@ async function IotAdaptor(server) {
     require('./strategies/IotAdapter');
 
     const DynavisionPlatform = require('./platform/dynavision');
-    //const FitbitPlatform = require('./platform/fitbit');
+    const FitbitPlatform = require('./platform/fitbit');
 
     const CreateDsu = require('./dsu/create');
     const CreateDsuResource = require('./dsu/resource/create');
