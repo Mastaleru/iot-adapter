@@ -2,6 +2,13 @@ const { google } = require("googleapis");
 const docs = require('@googleapis/docs')
 const fitbit = require("./fitbitEtlService");
 const fs = require("fs");
+
+const commonServices = require("common-services");
+const { DeviceAssignationService, CommunicationService, HealthDataService} = commonServices;
+const deviceAssignationService= new DeviceAssignationService();
+const healthDataService = new HealthDataService();
+const communicationService = CommunicationService.getCommunicationServiceInstance();
+
 const hl7HealthDataMapper = {
     "pulseoximeter": [fitbit.createSpO2Resource,fitbit.createPulseResource],
     "bpm": [fitbit.createSysResource,fitbit.createDiaResource],
@@ -29,7 +36,7 @@ drive.files.list(
     (err, res) => {
         if (err) return console.log("The API returned an error: " + err);
         const files = res.data.files;
-        console.log(files);
+        //console.log(files);
         files.forEach((folder)=>{
             getPatientData(folder)
         })
@@ -46,7 +53,7 @@ function getPatientData(patientFolder){
         }, (err, res) => {
             if (err) return console.log('The API returned an error: ' + err);
             const files = res.data.files;
-            console.log(res.data);
+            //console.log(res.data);
 
             if (files.length) {
                 files.forEach(async (file) => {
@@ -61,12 +68,19 @@ function getPatientData(patientFolder){
 
                     let name = patientFolder.name + '_' + file.name;
                     const data = await downloadFile(file.id, name, auth);
+                    const HL7observationPerType = {patientNumber: patientFolder.name, observations: [], deviceID: data[0]['Source_Data']};
 
                     hl7HealthDataMapper[deviceTypeDataExtractors].forEach(dataExtractor=>{
                         for (let i = 0; i < data.length; i++) {
-                            dataExtractor(patientFolder.name, data[i]);
+                            HL7observationPerType.observations.push(dataExtractor(patientFolder.name, data[i]));
                         }
                     })
+                    //console.log(HL7observationPerType);
+                    deviceAssignationService.getAssignedDevices((err, assignedDevices)=> {
+                        console.log(assignedDevices);
+
+                    })
+
                 });
             } else {
                 console.log('No files found in fitbit.');
@@ -87,11 +101,11 @@ async function downloadFile(realFileId, name, auth) {
         let bufferString = file.data;
         let arr = bufferString.split('\n');
         let userObj=JSON.parse(JSON.stringify(bufferString));//data to add
-        fs.appendFile(name, userObj, (err) => {
-            if (err) console.error('Couldn\'t append the data');
-            console.log('The data was appended to '+name+' file!');
-        });
-        // console.log(arr);
+        // fs.appendFile(name, userObj, (err) => {
+        //     if (err) console.error('Couldn\'t append the data');
+        //     console.log('The data was appended to '+name+' file!');
+        // });
+        //console.log(arr);
         let jsonObj = [];
         let headers = arr[0].split(',');
         let test = [];
@@ -116,7 +130,11 @@ async function downloadFile(realFileId, name, auth) {
             }
             jsonObj.push(obj);
         }
-        return jsonObj;
+        //console.log(jsonObj)
+
+
+
+        return jsonObj
     } catch (err) {
         throw err;
     }
