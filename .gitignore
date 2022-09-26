@@ -14,3 +14,4 @@ common-services
 mqs
 env.json
 iot-adapter/token.json
+credentials-service.json

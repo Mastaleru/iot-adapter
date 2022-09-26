@@ -19,7 +19,7 @@ const hl7HealthDataMapper = {
 const scopes = ["https://www.googleapis.com/auth/drive"];
 
 const auth = new docs.auth.GoogleAuth({
-    keyFilename: './platform/fitbit/credentials-service.json',
+    keyFilename: '../credentials-service.json',
     // Scopes can be specified either as an array or as a single, space-delimited string.
     scopes: scopes[0]
 });
@@ -112,12 +112,12 @@ function matchDataWithExistingAssignedDevices(HL7observationPerType, callback) {
             throw err;
         }
 
-        console.log(assignedDevices);
+        //console.log(assignedDevices);
         let patientAssignedDevices = assignedDevices.filter((assignedDevice) => {
             return HL7observationPerType.deviceId === assignedDevice.deviceId && assignedDevice.trialParticipantNumber === HL7observationPerType.patientNumber
         })
 
-        console.log(patientAssignedDevices);
+        //console.log(patientAssignedDevices);
 
         const saveObservations = (patientAssignedDevices, callback) =>{
             console.log("--",patientAssignedDevices);
