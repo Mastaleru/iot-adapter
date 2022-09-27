@@ -27,7 +27,7 @@ function device_assignation(message){
                     }
                    
                     else{                 
-                        healthDataService.saveObservation(observations.results, (err, data)=> {
+                        healthDataService.saveObservation(observations.results, assignDevice.trialParticipantNumber, assignDevice.deviceId, (err, data)=> {
                             if(err){
                                 console.log(err.message);
                             }
