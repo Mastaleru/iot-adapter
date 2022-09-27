@@ -1,17 +1,17 @@
-const { google } = require("googleapis");
+const {google} = require("googleapis");
 const docs = require('@googleapis/docs')
 const fitbit = require("./fitbitEtlService");
-const fs = require("fs");
 
 const commonServices = require("common-services");
-const { DeviceAssignationService, CommunicationService, HealthDataService,Constants} = commonServices;
-const deviceAssignationService= new DeviceAssignationService();
+const {DeviceAssignationService, CommunicationService, HealthDataService, Constants} = commonServices;
+const deviceAssignationService = new DeviceAssignationService();
 const healthDataService = new HealthDataService();
 const communicationService = CommunicationService.getCommunicationServiceInstance();
+const existingObservations = new Map();
 
 const hl7HealthDataMapper = {
-    "pulseoximeter": [fitbit.createSpO2Resource,fitbit.createPulseResource],
-    "bpm": [fitbit.createSysResource,fitbit.createDiaResource],
+    "pulseoximeter": [fitbit.createSpO2Resource, fitbit.createPulseResource],
+    "bpm": [fitbit.createSysResource, fitbit.createDiaResource],
     "thermo": [fitbit.createBodyTempResource],
     "activity": [fitbit.createCaloriesBurnedResource]
 }
@@ -23,7 +23,7 @@ const auth = new docs.auth.GoogleAuth({
     // Scopes can be specified either as an array or as a single, space-delimited string.
     scopes: scopes[0]
 });
-const drive = google.drive({ version: "v3", auth });
+const drive = google.drive({version: "v3", auth});
 
 // This is a simple sample script for retrieving the file list.
 let CSV_FOLDER = "1PSgC9RWj0A7osNqMIUdyLTSx825IAGNX"
@@ -36,74 +36,98 @@ drive.files.list(
     (err, res) => {
         if (err) return console.log("The API returned an error: " + err);
         const patientsHealthFiles = res.data.files;
-        searchForPatientsHealthData(patientsHealthFiles,()=>{
-            console.log("HealthData Lookup Completed!")
+        console.log("Fetching new health data...")
+        getExistingObservations((err) => {
+            if (err) {
+                throw err;
+            }
+            searchForPatientsHealthData(patientsHealthFiles, () => {
+                console.log("HealthData Lookup Completed!")
+            })
         })
     }
 );
 
-function searchForPatientsHealthData(patientsHealthFiles, callback){
+function searchForPatientsHealthData(patientsHealthFiles, callback) {
     const patientHealthFiles = patientsHealthFiles.shift();
-    getPatientData(patientHealthFiles,()=>{
-        if(patientsHealthFiles.length>0){
+    getPatientData(patientHealthFiles, () => {
+        if (patientsHealthFiles.length > 0) {
             return searchForPatientsHealthData(patientsHealthFiles, callback);
         }
         callback();
     })
 }
 
-function getPatientData(patientFolder, callback){
+function getPatientData(patientFolder, callback) {
 
-        console.log(patientFolder.name)
-        drive.files.list({
-            pageSize: 10,
-            fields: 'nextPageToken, files(id, name)',
-            q: `'${patientFolder.id}' in parents and mimeType=\'text/csv\'`
-        }, (err, res) => {
-            if (err) return console.log('The API returned an error: ' + err);
-            const patientFiles = res.data.files;
+    console.log(patientFolder.name)
+    drive.files.list({
+        pageSize: 10,
+        fields: 'nextPageToken, files(id, name)',
+        q: `'${patientFolder.id}' in parents and mimeType=\'text/csv\'`
+    }, (err, res) => {
+        if (err) return console.log('The API returned an error: ' + err);
+        const patientFiles = res.data.files;
 
-            const patientFilesHealthDataLookup =  (patientFiles, callback)=>{
-                const patientFile = patientFiles.shift();
-                console.log(`${patientFile.name} (${patientFile.id})`);
+        const patientFilesHealthDataLookup = (patientFiles, callback) => {
+            const patientFile = patientFiles.shift();
+            console.log(`${patientFile.name} (${patientFile.id})`);
 
-                const deviceTypeDataExtractors = patientFile.name.substring(0,patientFile.name.indexOf("."));
+            const deviceTypeDataExtractors = patientFile.name.substring(0, patientFile.name.indexOf("."));
 
-                if (!hl7HealthDataMapper[deviceTypeDataExtractors]) {
-                    console.error(`${deviceTypeDataExtractors} not recognized`);
-                    //continue lookup
+            if (!hl7HealthDataMapper[deviceTypeDataExtractors]) {
+                console.error(`${deviceTypeDataExtractors} not recognized`);
+                //continue lookup
+                if (patientFiles.length > 0) {
+                    return patientFilesHealthDataLookup(patientFiles, callback)
+                }
+                callback();
+            }
+
+            let name = patientFolder.name + '_' + patientFile.name;
+            downloadFile(patientFile.id, name, auth).then(data => {
+                const HL7observationPerType = {
+                    patientNumber: patientFolder.name,
+                    observations: [],
+                    deviceId: data[0]['Source_Data']
+                };
+
+                hl7HealthDataMapper[deviceTypeDataExtractors].forEach(dataExtractor => {
+                    for (let i = 0; i < data.length; i++) {
+                        HL7observationPerType.observations.push(dataExtractor(patientFolder.name, data[i]));
+                    }
+                })
+                //console.log(HL7observationPerType);
+                matchDataWithExistingAssignedDevices(HL7observationPerType, () => {
                     if (patientFiles.length > 0) {
                         return patientFilesHealthDataLookup(patientFiles, callback)
                     }
                     callback();
-                }
-
-                let name = patientFolder.name + '_' + patientFile.name;
-                downloadFile(patientFile.id, name, auth).then(data=>{
-                    const HL7observationPerType = {patientNumber: patientFolder.name, observations: [], deviceId: data[0]['Source_Data']};
-
-                    hl7HealthDataMapper[deviceTypeDataExtractors].forEach(dataExtractor=>{
-                        for (let i = 0; i < data.length; i++) {
-                            HL7observationPerType.observations.push(dataExtractor(patientFolder.name, data[i]));
-                        }
-                    })
-                    //console.log(HL7observationPerType);
-                    matchDataWithExistingAssignedDevices(HL7observationPerType, ()=>{
-                        if(patientFiles.length>0){
-                            return patientFilesHealthDataLookup(patientFiles, callback)
-                        }
-                        callback();
-                    });
                 });
-            }
+            });
+        }
 
-            if (patientFiles.length) {
-                return patientFilesHealthDataLookup(patientFiles, callback)
-            }
-            console.log(`No health data files found for patient with TP Number ${patientFolder.name}`);
-            callback();
+        if (patientFiles.length) {
+            return patientFilesHealthDataLookup(patientFiles, callback)
+        }
+        console.log(`No health data files found for patient with TP Number ${patientFolder.name}`);
+        callback();
 
-        });
+    });
+}
+
+
+function getExistingObservations(callback) {
+    healthDataService.getAllObservations((err, observations) => {
+        if (err) {
+            return callback(err);
+        }
+        observations.forEach(observationData => {
+            const observationsIdentifier = `${observationData.patientNumber}:${observationData.deviceId}`;
+            existingObservations.set(observationsIdentifier, observationData)
+        })
+        callback();
+    })
 }
 
 function matchDataWithExistingAssignedDevices(HL7observationPerType, callback) {
@@ -119,11 +143,13 @@ function matchDataWithExistingAssignedDevices(HL7observationPerType, callback) {
 
         //console.log(patientAssignedDevices);
 
-        const saveObservations = (patientAssignedDevices, callback) =>{
-            console.log("--",patientAssignedDevices);
+        const saveObservations = (patientAssignedDevices, callback) => {
+            console.log("--", patientAssignedDevices);
             let patientAssignedDevice = patientAssignedDevices.shift();
-            healthDataService.saveObservation(HL7observationPerType.observations, (err, data)=> {
-                if(err){
+
+
+            const informPatientAndSite = (err, data) => {
+                if (err) {
                     console.log(err.message);
                 }
                 communicationService.sendMessage(patientAssignedDevice.patientDID, {
@@ -142,13 +168,28 @@ function matchDataWithExistingAssignedDevices(HL7observationPerType, callback) {
                     });
                 }
 
-                if(patientAssignedDevices.length > 0){
+                if (patientAssignedDevices.length > 0) {
                     return saveObservations(patientAssignedDevices, callback);
                 }
                 callback();
+            }
+
+            const observationIdentifier = `${HL7observationPerType.patientNumber}:${HL7observationPerType.deviceId}`;
+            if (existingObservations.has(observationIdentifier)) {
+                const observationsData = existingObservations.get(observationIdentifier);
+                observationsData.observations = HL7observationPerType.observations;
+                return healthDataService.updateObservation(observationsData, informPatientAndSite);
+            }
+            healthDataService.saveObservation(HL7observationPerType.observations, HL7observationPerType.patientNumber, HL7observationPerType.deviceId, (err, data) => {
+                if (err) {
+                    return console.error(err);
+                }
+                existingObservations.set(observationIdentifier, data);
+                informPatientAndSite(undefined, data)
             });
+
         }
-        if(patientAssignedDevices.length>0){
+        if (patientAssignedDevices.length > 0) {
             return saveObservations(patientAssignedDevices, callback);
         }
         callback();
@@ -170,7 +211,7 @@ async function downloadFile(realFileId, name, auth) {
         let jsonObj = [];
         let headers = arr[0].split(',');
         let test = [];
-        for(let i = 0; i <headers.length; i++){
+        for (let i = 0; i < headers.length; i++) {
             let some = headers[i].replace(/"/g, '');
             some = some.replace(/ /g, '_');
             some = some.replace(/\(/g, '');
@@ -183,10 +224,10 @@ async function downloadFile(realFileId, name, auth) {
         }
 
         headers = test;
-        for(let i = 1; i < arr.length-1; i++) {
+        for (let i = 1; i < arr.length - 1; i++) {
             let data = arr[i].split(',');
             let obj = {};
-            for(var j = 0; j < data.length; j++) {
+            for (let j = 0; j < data.length; j++) {
                 obj[headers[j]] = data[j].replace(/"/g, '');
             }
             jsonObj.push(obj);
