@@ -27,26 +27,33 @@ const drive = google.drive({version: "v3", auth});
 
 // This is a simple sample script for retrieving the file list.
 let CSV_FOLDER = "1PSgC9RWj0A7osNqMIUdyLTSx825IAGNX"
-drive.files.list(
-    {
-        pageSize: 10,
-        fields: "nextPageToken, files(id, name)",
-        q: `'${CSV_FOLDER}' in parents`
-    },
-    (err, res) => {
-        if (err) return console.log("The API returned an error: " + err);
-        const patientsHealthFiles = res.data.files;
-        console.log("Fetching new health data...")
-        getExistingObservations((err) => {
-            if (err) {
-                throw err;
-            }
-            searchForPatientsHealthData(patientsHealthFiles, () => {
-                console.log("HealthData Lookup Completed!")
+
+const UPDATE_INTERVAL = parseInt(process.env.FITBIT_UPDATE_INTERVAL);
+readHealthDataFromGDrive();
+setInterval(readHealthDataFromGDrive,UPDATE_INTERVAL)
+
+function readHealthDataFromGDrive(){
+    drive.files.list(
+        {
+            pageSize: 10,
+            fields: "nextPageToken, files(id, name)",
+            q: `'${CSV_FOLDER}' in parents`
+        },
+        (err, res) => {
+            if (err) return console.log("The API returned an error: " + err);
+            const patientsHealthFiles = res.data.files;
+            console.log(`Starting fetching new health data at ${new Date().toLocaleString()}...`)
+            getExistingObservations((err) => {
+                if (err) {
+                    throw err;
+                }
+                searchForPatientsHealthData(patientsHealthFiles, () => {
+                    console.log(`HealthData Lookup Completed at ${new Date().toLocaleString()}`)
+                })
             })
-        })
-    }
-);
+        }
+    );
+}
 
 function searchForPatientsHealthData(patientsHealthFiles, callback) {
     const patientHealthFiles = patientsHealthFiles.shift();
@@ -177,6 +184,13 @@ function matchDataWithExistingAssignedDevices(HL7observationPerType, callback) {
             const observationIdentifier = `${HL7observationPerType.patientNumber}:${HL7observationPerType.deviceId}`;
             if (existingObservations.has(observationIdentifier)) {
                 const observationsData = existingObservations.get(observationIdentifier);
+                //do not update with the same data, continue
+                if(observationsData.observations.length === HL7observationPerType.observations.length){
+                    if (patientAssignedDevices.length > 0) {
+                        return saveObservations(patientAssignedDevices, callback);
+                    }
+                    return callback();
+                }
                 observationsData.observations = HL7observationPerType.observations;
                 return healthDataService.updateObservation(observationsData, informPatientAndSite);
             }
