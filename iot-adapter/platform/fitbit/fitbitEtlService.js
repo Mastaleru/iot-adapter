@@ -90,9 +90,9 @@ const buildSpO2Resource = (patientId, data) => {
       effectiveDateTime: effectiveDateTime.toISOString(),
       valueQuantity: {
         value:data.Pulse,
-        unit: "%",
+        unit: "bpm",
         system: "http://unitsofmeasure.org",
-        code: "%"
+        code: "bpm"
       }
     };
     return resource;

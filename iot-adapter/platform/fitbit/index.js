@@ -11,7 +11,7 @@ const existingObservations = new Map();
 
 const hl7HealthDataMapper = {
     "pulseoximeter": [fitbit.createSpO2Resource, fitbit.createPulseResource],
-    "bpm": [fitbit.createSysResource, fitbit.createDiaResource],
+    "bpm": [fitbit.createSysResource, fitbit.createDiaResource,fitbit.createPulseResource],
     "thermo": [fitbit.createBodyTempResource],
     "activity": [fitbit.createCaloriesBurnedResource]
 }
@@ -222,32 +222,35 @@ async function downloadFile(realFileId, name, auth) {
         });
         let bufferString = file.data;
         let arr = bufferString.split('\n');
-        let jsonObj = [];
+        let healthData = [];
         let headers = arr[0].split(',');
-        let test = [];
+        let escapedHeaders = [];
         for (let i = 0; i < headers.length; i++) {
-            let some = headers[i].replace(/"/g, '');
-            some = some.replace(/ /g, '_');
-            some = some.replace(/\(/g, '');
-            some = some.replace(/\)/g, '');
-            some = some.replace(/\//g, '_');
-            some = some.replace(/-/g, '_');
-            some = some.replace(/\./g, '_');
-            some = some.replace(/:/g, '_');
-            test.push(some)
+            let header = headers[i].replace(/"/g, '');
+            header = header.replace(/ /g, '_');
+            header = header.replace(/\(/g, '');
+            header = header.replace(/\)/g, '');
+            header = header.replace(/\//g, '_');
+            header = header.replace(/-/g, '_');
+            header = header.replace(/\./g, '_');
+            header = header.replace(/:/g, '_');
+            header = header.replace(/[\r]/g, "");
+            escapedHeaders.push(header);
         }
 
-        headers = test;
+        headers = escapedHeaders;
         for (let i = 1; i < arr.length - 1; i++) {
             let data = arr[i].split(',');
-            let obj = {};
+            let escapedDataObj = {};
             for (let j = 0; j < data.length; j++) {
-                obj[headers[j]] = data[j].replace(/"/g, '');
+                let healthData = data[j];
+                healthData = healthData.replace(/"/g, '');
+                healthData = healthData.replace(/[\r]/g, "");
+                escapedDataObj[headers[j]] = healthData;
             }
-            jsonObj.push(obj);
+            healthData.push(escapedDataObj);
         }
-
-        return jsonObj
+        return healthData;
     } catch (err) {
         throw err;
     }
