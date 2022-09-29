@@ -263,8 +263,113 @@ const buildDeviceResource = (deviceInfo) => {
   return resource;
 }
 
+const buildStepsResource = (patientId, data) => {
+  const effectiveDateTime = moment(data.Date_non_US, 'YYYY-MM-DD HH:mm:ss');
+  const identifier = `patient/${patientId}/observation/steps/${effectiveDateTime.unix()}`;
+  const resource = {
+    sk: patientId,
+    identifier: [
+      {
+        use: 'secondary',
+        value: identifier
+      }
+    ],
+    code: {
+      coding: [
+        {
+          system: "http://loinc.org",
+          code: "41950-7"
+        }
+      ],
+      text: "Steps"
+    },
+    subject: {
+      reference: `Patient/${patientId}`
+    },
+    effectiveDateTime: effectiveDateTime.toISOString(),
+    valueQuantity: {
+      value: data.Steps,
+      unit: "per activity",
+      system: "http://unitsofmeasure.org",
+      code: "per activity"
+    }
+  };
+  return resource;
+}
+
+const buildDistanceResource = (patientId, data) => {
+  const effectiveDateTime = moment(data.Date_non_US, 'YYYY-MM-DD HH:mm:ss');
+  const identifier = `patient/${patientId}/observation/distance/${effectiveDateTime.unix()}`;
+  const resource = {
+    sk: patientId,
+    identifier: [
+      {
+        use: 'secondary',
+        value: identifier
+      }
+    ],
+    code: {
+      coding: [
+        {
+          system: "http://loinc.org",
+          code: "41953-1"
+        }
+      ],
+      text: "Steps"
+    },
+    subject: {
+      reference: `Patient/${patientId}`
+    },
+    effectiveDateTime: effectiveDateTime.toISOString(),
+    valueQuantity: {
+      value: data.Distance_in_Meters,
+      unit: "per activity",
+      system: "http://unitsofmeasure.org",
+      code: "per activity"
+    }
+  };
+  return resource;
+}
+
+const buildDurationActivityResource = (patientId, data) => {
+  const effectiveDateTime = moment(data.Date_non_US, 'YYYY-MM-DD HH:mm:ss');
+  const identifier = `patient/${patientId}/observation/distance/${effectiveDateTime.unix()}`;
+  const resource = {
+    sk: patientId,
+    identifier: [
+      {
+        use: 'secondary',
+        value: identifier
+      }
+    ],
+    code: {
+      coding: [
+        {
+          system: "http://loinc.org",
+          code: "55411-3"
+        }
+      ],
+      text: "Duration"
+    },
+    subject: {
+      reference: `Patient/${patientId}`
+    },
+    effectiveDateTime: effectiveDateTime.toISOString(),
+    valueQuantity: {
+      value: data.Duration_in_Minutes,
+      unit: "minutes",
+      system: "http://unitsofmeasure.org",
+      code: "minutes"
+    }
+  };
+  return resource;
+}
+
   module.exports = {
     createSysResource: buildSystolicBloodPressureResource,
+    createStepsResource:buildStepsResource,
+    createDistanceResource:buildDistanceResource,
+    createDurationActivityResource:buildDurationActivityResource,
     createDiaResource: buildDiasystolicBloodPressureResource,
     createSpO2Resource: buildSpO2Resource,
     createPulseResource: buildPulseResource,

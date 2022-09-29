@@ -11,9 +11,9 @@ const existingObservations = new Map();
 
 const hl7HealthDataMapper = {
     "pulseoximeter": [fitbit.createSpO2Resource, fitbit.createPulseResource],
-    "bpm": [fitbit.createSysResource, fitbit.createDiaResource,fitbit.createPulseResource],
+    "bpm": [fitbit.createSysResource, fitbit.createDiaResource, fitbit.createPulseResource],
     "thermo": [fitbit.createBodyTempResource],
-    "activity": [fitbit.createCaloriesBurnedResource]
+    "activity": [fitbit.createCaloriesBurnedResource, fitbit.createStepsResource, fitbit.createDistanceResource, fitbit.createDurationActivityResource]
 }
 
 const scopes = ["https://www.googleapis.com/auth/drive"];
@@ -30,29 +30,48 @@ let CSV_FOLDER = "1PSgC9RWj0A7osNqMIUdyLTSx825IAGNX"
 
 const UPDATE_INTERVAL = parseInt(process.env.FITBIT_UPDATE_INTERVAL);
 readHealthDataFromGDrive();
-setInterval(readHealthDataFromGDrive,UPDATE_INTERVAL)
+setInterval(readHealthDataFromGDrive, UPDATE_INTERVAL)
 
-function readHealthDataFromGDrive(){
-    drive.files.list(
-        {
-            pageSize: 10,
-            fields: "nextPageToken, files(id, name)",
-            q: `'${CSV_FOLDER}' in parents`
-        },
-        (err, res) => {
-            if (err) return console.log("The API returned an error: " + err);
-            const patientsHealthFiles = res.data.files;
+function readHealthDataFromGDrive() {
+
+    getExistingObservations((err) => {
+
+            if (err) {
+                throw err;
+            }
             console.log(`Starting fetching new health data at ${new Date().toLocaleString()}...`)
-            getExistingObservations((err) => {
-                if (err) {
-                    throw err;
-                }
-                searchForPatientsHealthData(patientsHealthFiles, () => {
-                    console.log(`HealthData Lookup Completed at ${new Date().toLocaleString()}`)
-                })
+            readGDrivePage(undefined, () => {
+                console.log(`HealthData Lookup Completed at ${new Date().toLocaleString()}`)
             })
         }
     );
+}
+
+
+function readGDrivePage(nextPageToken, completionCallback) {
+    const options = {
+        pageSize: 10,
+        fields: "nextPageToken, files(id, name)",
+        q: `'${CSV_FOLDER}' in parents`
+    };
+
+    if (nextPageToken) {
+        options.pageToken = nextPageToken;
+    }
+
+    drive.files.list(
+        options,
+        (err, res) => {
+            if (err) return console.log("The API returned an error: " + err);
+            const patientsHealthFiles = res.data.files;
+
+            searchForPatientsHealthData(patientsHealthFiles, () => {
+                if (res.data.nextPageToken) {
+                    return readGDrivePage(res.data.nextPageToken, completionCallback)
+                }
+                completionCallback();
+            })
+        })
 }
 
 function searchForPatientsHealthData(patientsHealthFiles, callback) {
@@ -185,7 +204,7 @@ function matchDataWithExistingAssignedDevices(HL7observationPerType, callback) {
             if (existingObservations.has(observationIdentifier)) {
                 const observationsData = existingObservations.get(observationIdentifier);
                 //do not update with the same data, continue
-                if(observationsData.observations.length === HL7observationPerType.observations.length){
+                if (observationsData.observations.length === HL7observationPerType.observations.length) {
                     if (patientAssignedDevices.length > 0) {
                         return saveObservations(patientAssignedDevices, callback);
                     }
