@@ -315,7 +315,7 @@ const buildDistanceResource = (patientId, data) => {
           code: "41953-1"
         }
       ],
-      text: "Steps"
+      text: "Distance"
     },
     subject: {
       reference: `Patient/${patientId}`
@@ -323,9 +323,9 @@ const buildDistanceResource = (patientId, data) => {
     effectiveDateTime: effectiveDateTime.toISOString(),
     valueQuantity: {
       value: data.Distance_in_Meters,
-      unit: "per activity",
+      unit: "meters",
       system: "http://unitsofmeasure.org",
-      code: "per activity"
+      code: "meters"
     }
   };
   return resource;
