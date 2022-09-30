@@ -33,28 +33,32 @@ function dp_updated_add(message) {
                 console.log(err);
             }
             let researcherDID = studyFullData.researcherDID;
-            let requestedDataType = studyFullData.data;
-           
+            let requestedDataTypes = studyFullData.data;
+            
             // Find avaiable Data and Create  Permissioned data DSU
             healthDataService.getAllObservations((err, allPatientsObservations)=>{
                 if (err){
                     return console.log(err);
                 }
                 let collectedObservations = [];
-                allPatientsObservations.forEach(patientObservations => {
-                    patientObservations.observations.forEach(observation => {
-                        let patientTPNumber = observation.subject.reference.slice(8);
-                        let observationDataType = observation.code.text;
-                        if (patientTPNumber === matchTPNumber &&  observationDataType === requestedDataType) {
-                            observation.subject.reference = match.patient.patientDID;
-                            observation.studyUID = message.studyUID;
-                            observation.objectId = "N/A";
-                            observation.sk = "N/A";
-                            observation.identifier = "N/A";
-                            collectedObservations.push(observation)
-                        }
+
+                requestedDataTypes.forEach(datatype => {
+                    allPatientsObservations.forEach(patientObservations => {
+                        patientObservations.observations.forEach(observation => {
+                            let patientTPNumber = observation.subject.reference.slice(8);
+                            let observationDataType = observation.code.text;
+                            if (patientTPNumber === matchTPNumber &&  observationDataType === datatype) {
+                                observation.subject.reference = match.patient.patientDID;
+                                observation.studyUID = message.studyUID;
+                                observation.objectId = "N/A";
+                                observation.sk = "N/A";
+                                observation.identifier = "N/A";
+                                collectedObservations.push(observation)
+                            }
+                        });
                     });
                 });
+
                 permissionedHealthDataService.saveObservation(collectedObservations, (err, savedData)=> {
                     if (err){
                         console.log(err);
