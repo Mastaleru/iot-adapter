@@ -36,7 +36,7 @@ function communicate_study_data_matchmaking(message) {
                         if (patientDataType === datatype ) {
                             let candidatePatientFound = {
                                 patientTPNumber: patientTPNumber,
-                                patientDataType: patientDataType
+                                patientDataType: mountedStudy.data
                             };
                             candidatePatientsFound.push(candidatePatientFound);
                             return false;
