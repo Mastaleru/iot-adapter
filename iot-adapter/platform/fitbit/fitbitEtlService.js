@@ -282,7 +282,7 @@ const buildStepsResource = (patientId, data) => {
           display : "Number of steps in unspecified time Pedometer"
         }
       ],
-      text: "Steps Count"
+      text: "Steps"
     },
     subject: {
       reference: `Patient/${patientId}`
@@ -290,9 +290,9 @@ const buildStepsResource = (patientId, data) => {
     effectiveDateTime: effectiveDateTime.toISOString(),
     valueQuantity: {
       value: data.Steps,
-      unit: "/d", /** per day = /d, per week = /w , per hour =  /h */
+      unit: "per activity",
       system: "http://unitsofmeasure.org",
-      code: "/d"
+      code: "per activity"
     }
   };
   return resource;
