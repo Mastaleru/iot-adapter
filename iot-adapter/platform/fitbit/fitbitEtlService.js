@@ -278,10 +278,11 @@ const buildStepsResource = (patientId, data) => {
       coding: [
         {
           system: "http://loinc.org",
-          code: "41950-7"
+          code: "55423-8",
+          display : "Number of steps in unspecified time Pedometer"
         }
       ],
-      text: "Steps"
+      text: "Steps Count"
     },
     subject: {
       reference: `Patient/${patientId}`
@@ -289,9 +290,9 @@ const buildStepsResource = (patientId, data) => {
     effectiveDateTime: effectiveDateTime.toISOString(),
     valueQuantity: {
       value: data.Steps,
-      unit: "per activity",
+      unit: "/d", /** per day = /d, per week = /w , per hour =  /h */
       system: "http://unitsofmeasure.org",
-      code: "per activity"
+      code: "/d"
     }
   };
   return resource;
@@ -333,7 +334,7 @@ const buildDistanceResource = (patientId, data) => {
 
 const buildDurationActivityResource = (patientId, data) => {
   const effectiveDateTime = moment(data.Date_non_US, 'YYYY-MM-DD HH:mm:ss');
-  const identifier = `patient/${patientId}/observation/distance/${effectiveDateTime.unix()}`;
+  const identifier = `patient/${patientId}/observation/duration/${effectiveDateTime.unix()}`;
   const resource = {
     sk: patientId,
     identifier: [
