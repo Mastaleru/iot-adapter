@@ -1,6 +1,6 @@
 {
   "name": "iot-adapter",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "IoT Adapter",
   "scripts": {
     "dev-install": "node ./bin/mkDevEnv.js && npm install",
