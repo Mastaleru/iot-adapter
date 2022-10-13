@@ -107,7 +107,7 @@ function getPatientData(patientFolder, callback) {
                 if (patientFiles.length > 0) {
                     return patientFilesHealthDataLookup(patientFiles, callback)
                 }
-                callback();
+                return callback();
             }
 
             let name = patientFolder.name + '_' + patientFile.name;
