@@ -3,7 +3,7 @@ const moment = require('moment');
 
 const buildSpO2Resource = (patientId, data) => {
     // console.log(data.Date_US)
-    const effectiveDateTime = moment(data.Date_non_US, 'YYYY-MM-DD HH:mm:ss');
+    const effectiveDateTime = moment(data.Date_non_US.trim(), 'DD/MM/YYYY HH:mm');
     const identifier = `patient/${patientId}/observation/spo2/${effectiveDateTime.unix()}`;
     const resource = {
       sk: patientId,
@@ -35,7 +35,7 @@ const buildSpO2Resource = (patientId, data) => {
   }
   const buildBodyTempResource = (patientId, data) => {
     // console.log(data.Date_US)
-    const effectiveDateTime = moment(data.Date_non_US, 'YYYY-MM-DD HH:mm:ss');
+    const effectiveDateTime = moment(data.Date_non_US.trim(), 'DD/MM/YYYY HH:mm');
     const identifier = `patient/${patientId}/observation/bodytemp/${effectiveDateTime.unix()}`;
     const resource = {
       sk: patientId,
@@ -67,7 +67,7 @@ const buildSpO2Resource = (patientId, data) => {
   }
   const buildPulseResource = (patientId, data) => {
     // console.log(data.Date_US)
-    const effectiveDateTime = moment(data.Date_non_US, 'YYYY-MM-DD HH:mm:ss');
+    const effectiveDateTime = moment(data.Date_non_US.trim(), 'DD/MM/YYYY HH:mm');
     const identifier = `patient/${patientId}/observation/pulse/${effectiveDateTime.unix()}`;
     const resource = {
       sk: patientId,
@@ -100,7 +100,7 @@ const buildSpO2Resource = (patientId, data) => {
   
   
   const buildSystolicBloodPressureResource = (patientId, data) => {
-    const effectiveDateTime = moment(data.Date_non_US, 'YYYY-MM-DD HH:mm:ss');
+    const effectiveDateTime = moment(data.Date_non_US.trim(), 'DD/MM/YYYY HH:mm');
     const identifier = `patient/${patientId}/observation/bpsys/${effectiveDateTime.unix()}`;
     const resource = {
       sk: patientId,
@@ -133,7 +133,7 @@ const buildSpO2Resource = (patientId, data) => {
   }
   
   const buildDiasystolicBloodPressureResource = (patientId, data) => {
-    const effectiveDateTime = moment(data.Date_non_US, 'YYYY-MM-DD HH:mm:ss');
+    const effectiveDateTime = moment(data.Date_non_US.trim(), 'DD/MM/YYYY HH:mm');
     const identifier = `patient/${patientId}/observation/bpdia/${effectiveDateTime.unix()}`;
     const resource = {
       sk: patientId,
@@ -166,7 +166,7 @@ const buildSpO2Resource = (patientId, data) => {
     return resource;
   }
   const buildCaloriesBurnedResource = (patientId, data) => {
-    const effectiveDateTime = moment(data.Date_non_US, 'YYYY-MM-DD HH:mm:ss');
+    const effectiveDateTime = moment(data.Date_non_US.trim(), 'DD/MM/YYYY HH:mm');
     const identifier = `patient/${patientId}/observation/calburned/${effectiveDateTime.unix()}`;
     const resource = {
       sk: patientId,
@@ -264,7 +264,7 @@ const buildDeviceResource = (deviceInfo) => {
 }
 
 const buildStepsResource = (patientId, data) => {
-  const effectiveDateTime = moment(data.Date_non_US, 'YYYY-MM-DD HH:mm:ss');
+  const effectiveDateTime = moment(data.Date_non_US.trim(), 'DD/MM/YYYY HH:mm');
   const identifier = `patient/${patientId}/observation/steps/${effectiveDateTime.unix()}`;
   const resource = {
     sk: patientId,
@@ -299,7 +299,7 @@ const buildStepsResource = (patientId, data) => {
 }
 
 const buildDistanceResource = (patientId, data) => {
-  const effectiveDateTime = moment(data.Date_non_US, 'YYYY-MM-DD HH:mm:ss');
+  const effectiveDateTime = moment(data.Date_non_US.trim(), 'DD/MM/YYYY HH:mm');
   const identifier = `patient/${patientId}/observation/distance/${effectiveDateTime.unix()}`;
   const resource = {
     sk: patientId,
@@ -333,7 +333,7 @@ const buildDistanceResource = (patientId, data) => {
 }
 
 const buildDurationActivityResource = (patientId, data) => {
-  const effectiveDateTime = moment(data.Date_non_US, 'YYYY-MM-DD HH:mm:ss');
+  const effectiveDateTime = moment(data.Date_non_US.trim(), 'DD/MM/YYYY HH:mm');
   const identifier = `patient/${patientId}/observation/duration/${effectiveDateTime.unix()}`;
   const resource = {
     sk: patientId,
