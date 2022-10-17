@@ -178,26 +178,41 @@ function matchDataWithExistingAssignedDevices(HL7observationPerType, callback) {
                 if (err) {
                     console.log(err.message);
                 }
-                communicationService.sendMessage(patientAssignedDevice.patientDID, {
-                    operation: Constants.MESSAGES.HCO.NEW_HEALTHDATA,
-                    sReadSSI: data.sReadSSI,
-                    message: "Your new data is available now!"
-                });
-                if (patientAssignedDevice.hasOwnProperty("clinicalSiteDID")) {
-                    communicationService.sendMessage(patientAssignedDevice.clinicalSiteDID, {
+
+                const sendMessagesToStakeholders = (sReadSSI) => {
+                    communicationService.sendMessage(patientAssignedDevice.patientDID, {
                         operation: Constants.MESSAGES.HCO.NEW_HEALTHDATA,
-                        sReadSSI: data.sReadSSI,
-                        deviceId: patientAssignedDevice.deviceId,
-                        trialParticipantNumber: patientAssignedDevice.trialParticipantNumber,
-                        trial: patientAssignedDevice.trial,
+                        sReadSSI: sReadSSI,
                         message: "Your new data is available now!"
                     });
+                    if (patientAssignedDevice.hasOwnProperty("clinicalSiteDID")) {
+                        communicationService.sendMessage(patientAssignedDevice.clinicalSiteDID, {
+                            operation: Constants.MESSAGES.HCO.NEW_HEALTHDATA,
+                            sReadSSI: sReadSSI,
+                            deviceId: patientAssignedDevice.deviceId,
+                            trialParticipantNumber: patientAssignedDevice.trialParticipantNumber,
+                            trial: patientAssignedDevice.trial,
+                            message: "Your new data is available now!"
+                        });
+                    }
+
+                    if (patientAssignedDevices.length > 0) {
+                        return saveObservations(patientAssignedDevices, callback);
+                    }
+                    callback();
                 }
 
-                if (patientAssignedDevices.length > 0) {
-                    return saveObservations(patientAssignedDevices, callback);
+                if(data.sReadSSI){
+                    return sendMessagesToStakeholders(data.sReadSSI)
                 }
-                callback();
+                healthDataService.getMountedSSI(data.uid, (err, ssi) => {
+                    if (err) {
+                        return callback(err);
+                    }
+                    const sReadSSI = healthDataService.getSReadSSI(ssi);
+                    sendMessagesToStakeholders(sReadSSI)
+                })
+
             }
 
             const observationIdentifier = `${HL7observationPerType.patientNumber}:${HL7observationPerType.deviceId}`;
