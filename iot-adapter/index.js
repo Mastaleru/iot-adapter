@@ -13,7 +13,8 @@ require(commonServicesBundle);
 const commonServices = require("common-services")
 const {DidService, MessageHandlerService} = commonServices;
 const didType = "ssi:name";
-const DOMAIN = process.env.DID_DOMAIN;
+const DOMAIN = process.env.DOMAIN;
+const DID_DOMAIN = process.env.DID_DOMAIN;
 const publicName = process.env.IOT_ADAPTOR_DID;
 
 const express = require('express');
@@ -38,8 +39,9 @@ async function setupIoTAdaptorEnvironment() {
 
     console.log("init", initialEnv);
     if (!initialEnv.did) {
-        initialEnv.did = `did:${didType}:${DOMAIN}:${publicName}`;
-        initialEnv.didDomain = DOMAIN;
+        initialEnv.domain = DOMAIN;
+        initialEnv.didDomain = DID_DOMAIN;
+        initialEnv.did = `did:${didType}:${DID_DOMAIN}:${publicName}`;
         initialEnv.vault = "server";
         initialEnv.enclaveType = "WalletDBEnclave";
         await $$.promisify(mainDSU.writeFile)("environment.json", JSON.stringify(initialEnv));
