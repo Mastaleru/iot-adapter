@@ -21,14 +21,18 @@ const createWalletDB = (dbName) => {
         reject(error);
       } else {
         // console.log('**********************');
-        const sReadSSIObject = seedSSIObject.derive();
-        const dbObject = db.getWalletDB(seedSSIObject, dbName);
-        // console.log(dbObject);
-        // console.log(sReadSSIObject);
+        seedSSIObject.derive((err, sReadSSIObject) => {
+          if (err) {
+            return reject(error);
+          }
+          const dbObject = db.getWalletDB(seedSSIObject, dbName);
+          // console.log(dbObject);
+          // console.log(sReadSSIObject);
 
-        resolve({
-          seedSSI: seedSSIObject.getIdentifier(),
-          sReadSSI: sReadSSIObject.getIdentifier()
+          resolve({
+            seedSSI: seedSSIObject.getIdentifier(),
+            sReadSSI: sReadSSIObject.getIdentifier()
+          });
         });
       }
     });
