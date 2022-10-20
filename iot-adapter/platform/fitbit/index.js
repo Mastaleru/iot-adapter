@@ -209,10 +209,13 @@ function matchDataWithExistingAssignedDevices(HL7observationPerType, callback) {
                     if (err) {
                         return callback(err);
                     }
-                    const sReadSSI = healthDataService.getSReadSSI(ssi);
-                    sendMessagesToStakeholders(sReadSSI)
+                    healthDataService.getSReadSSI(ssi, (err, sReadSSI) => {
+                        if (err) {
+                            return callback(err);
+                        }
+                        sendMessagesToStakeholders(sReadSSI)
+                    });
                 })
-
             }
 
             const observationIdentifier = `${HL7observationPerType.patientNumber}:${HL7observationPerType.deviceId}`;
