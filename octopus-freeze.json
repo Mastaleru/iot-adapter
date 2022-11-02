@@ -2,18 +2,27 @@
     "workDir": ".",
     "dependencies": [
         {
-            "name": "privatesky",
-            "src": "http://github.com/privatesky/psk-release.git",
+            "name": "opendsu-sdk",
+            "src": "http://github.com/opendsu/opendsu-sdk.git",
             "actions": [
                 {
                     "type": "smartClone",
                     "target": ".",
                     "collectLog": false,
-                    "commit": "a11f3cd3679ce92f3974843db2b70c3a64f9abdb"
+                    "commit": "684042b5f4cb29e641c35fcd7b909a5e2fc3b4aa"
                 },
                 {
                     "type": "execute",
-                    "cmd": "cd privatesky && npm install"
+                    "cmd": "cd opendsu-sdk && npm install"
+                }
+            ]
+        },
+        {
+            "name": "build opendsu-sdk",
+            "actions": [
+                {
+                    "type": "execute",
+                    "cmd": "cd opendsu-sdk && npm run build"
                 }
             ]
         },
@@ -25,7 +34,7 @@
                     "type": "smartClone",
                     "target": ".",
                     "collectLog": false,
-                    "commit": "0735545fab66ffcc61d27940e9d4738162e4719f"
+                    "commit": "cf4c7d6ae2d47ba3db65b8e40c1f61496be2e739"
                 },
                 {
                     "type": "execute",
