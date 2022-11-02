@@ -3,7 +3,7 @@
 .prettierignore
 .idea
 .vscode
-privatesky
+opendsu-sdk
 node_modules
 package-lock.json
 env.json.devel

@@ -11,15 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/paiusCatalin/iot-adapter.git"
+    "url": "git+https://github.com/PharmaLedger-IMI/iot-adapter.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/paiusCatalin/iot-adapter/issues"
+    "url": "https://github.com/PharmaLedger-IMI/iot-adapter/issues"
   },
-  "homepage": "https://github.com/paiusCatalin/iot-adapter#readme",
+  "homepage": "https://github.com/PharmaLedger-IMI/iot-adapter#readme",
   "dependencies": {
-    "octopus": "git+http://github.com/privatesky/octopus.git"
+    "octopus": "git+http://github.com/opendsu/octopus.git"
   }
 }
