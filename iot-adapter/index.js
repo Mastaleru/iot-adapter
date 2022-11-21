@@ -37,7 +37,7 @@ async function setupIoTAdaptorEnvironment() {
     let initialEnv = JSON.parse(await $$.promisify(mainDSU.readFile)("environment.json"));
 
 
-    console.log("init", initialEnv);
+    console.log("environment.json\n", JSON.stringify(initialEnv, null, 4));
     if (!initialEnv.did) {
         initialEnv.domain = DOMAIN;
         initialEnv.didDomain = DID_DOMAIN;
