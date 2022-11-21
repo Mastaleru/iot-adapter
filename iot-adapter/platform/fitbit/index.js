@@ -167,10 +167,7 @@ function matchDataWithExistingAssignedDevices(HL7observationPerType, callback) {
             return HL7observationPerType.deviceId === assignedDevice.deviceId && assignedDevice.trialParticipantNumber === HL7observationPerType.patientNumber
         })
 
-        //console.log(patientAssignedDevices);
-
         const saveObservations = (patientAssignedDevices, callback) => {
-            console.log("--", patientAssignedDevices);
             let patientAssignedDevice = patientAssignedDevices.shift();
 
 
