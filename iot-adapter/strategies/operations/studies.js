@@ -61,9 +61,9 @@ function communicate_study_data_matchmaking(message) {
                     });
                 });
 
-                console.log(`Candidate patients found: ${JSON.stringify(candidatePatientsFound)}`);
+                console.log(`Candidate patients found:\n ${JSON.stringify(candidatePatientsFound, null, 4)}`);
 
-                keys = ['patientDID'];
+                let keys = ['patientDID'];
                 candidatesToCommunicate = candidatePatientsFound.filter(
                     (s => o => 
                         (k => !s.has(k) && s.add(k))
