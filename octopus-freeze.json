@@ -3,13 +3,13 @@
     "dependencies": [
         {
             "name": "opendsu-sdk",
-            "src": "https://github.com/Mastaleru/psk-release.git",
+            "src": "https://github.com/opendsu/opendsu-sdk.git",
             "actions": [
                 {
                     "type": "smartClone",
                     "target": ".",
                     "collectLog": false,
-                    "commit": "0fbfc90772b6f31baae5fcd88cd67f0ba64ea3fc"
+                    "commit": "0002dd750e6603bfd361d2efb0729cd49a13c37e"
                 },
                 {
                     "type": "execute",
