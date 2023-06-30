@@ -10,7 +10,7 @@ env.json.devel
 latest-change-set.txt
 iot-adaptor/data
 seed
-common-services
+/common-services
 mqs
 env.json
 iot-adapter/token.json

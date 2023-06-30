@@ -1,0 +1,18 @@
+{
+  "name": "eco-iot-services",
+  "version": "1.0.0",
+  "description": "Common services for UC6 & UC7-9",
+  "main": "index.js",
+  "scripts": {
+    "build": "node ./node_modules/octopus/scripts/run build devmode"
+  },
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PharmaLedger-IMI/eco-iot-services.git"
+  },
+  "dependencies": {
+    "octopus": "git+http://github.com/opendsu/octopus.git#a2bfd2485eccca66cb1160613eac9f6b30d66bda"
+  }
+}
