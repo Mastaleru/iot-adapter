@@ -21,7 +21,7 @@
     "googleapis": "^39.2.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
-    "octopus": "git+https://github.com/opendsu/octopus.git",
+    "octopus": "git+http://github.com/opendsu/octopus.git#a2bfd2485eccca66cb1160613eac9f6b30d66bda",
     "querystring": "^0.2.1",
     "supports-color": "^8.1.1",
     "uuid": "^8.3.2",

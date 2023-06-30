@@ -3,13 +3,21 @@
     "dependencies": [
         {
             "name": "opendsu-sdk",
-            "src": "https://github.com/opendsu/opendsu-sdk.git",
+            "src": "https://github.com/Mastaleru/opendsu-sdk.git",
             "actions": [
                 {
                     "type": "smartClone",
                     "target": ".",
                     "collectLog": false,
                     "commit": "0002dd750e6603bfd361d2efb0729cd49a13c37e"
+                },
+                {
+                    "type": "copy",
+                    "src": "./patch/opendsu-sdk",
+                    "target": "./opendsu-sdk",
+                    "options": {
+                        "overwrite": true
+                    }
                 },
                 {
                     "type": "execute",
@@ -26,6 +34,14 @@
                     "target": ".",
                     "collectLog": false,
                     "commit": "8da87d86e11533a4d2af2528267e6320115e5bc9"
+                },
+                {
+                    "type": "copy",
+                    "src": "./patch/common-services",
+                    "target": "./common-services",
+                    "options": {
+                        "overwrite": true
+                    }
                 },
                 {
                     "type": "execute",
